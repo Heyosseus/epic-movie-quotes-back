@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
+use App\Mail\AccountActivationMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -17,6 +19,7 @@ class AuthController extends Controller
 
         $user->save();
 
+        Mail::to($user->email)->send(new AccountActivationMail($user->token));
         return response()->json(['user' => $user], 200);
     }
 
