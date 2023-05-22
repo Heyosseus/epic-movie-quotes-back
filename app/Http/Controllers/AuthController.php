@@ -15,8 +15,6 @@ class AuthController extends Controller
     {
         $user = User::create($request->validated());
 
-        $user->password = bcrypt($user->password);
-
         $user->save();
 
         return response()->json(['user' => $user], 200);
@@ -26,22 +24,10 @@ class AuthController extends Controller
     {
         $attributes = $request->only('email', 'password');
 
-        $user = User::where('email', $attributes['email'])->first();
-
-//        return response()->json(['user' => $user], 200);
-        return response()->json(Hash::check($attributes['password'], $user->password));
-//        if ($user && Hash::check($attributes['password'], $user->password)) {
-//            // Authentication successful
-//            return response()->json(['message' => 'Logged in']);
-//        } else {
-//            // Authentication failed
-//            return response()->json(['message' => 'Invalid credentials'], 401);
-//        }
-
-//        if(auth()->attempt($attributes)) {
-//            return response()->json(['message' => 'Logged in']);
-//        } else {
-//            return response()->json(['message' => 'Invalid credentials'], 401);
-//        }
+        if(auth()->attempt($attributes)) {
+            return response()->json(['message' => 'Logged in']);
+        } else {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
     }
 }
