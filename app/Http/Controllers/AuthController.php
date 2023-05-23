@@ -17,8 +17,6 @@ class AuthController extends Controller
     {
         $user = User::create($request->validated());
 
-        $user->save();
-
         Mail::to($user->email)->send(new AccountActivationMail($user->token));
         return response()->json(['user' => $user], 200);
     }

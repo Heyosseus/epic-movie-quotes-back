@@ -25,7 +25,7 @@ class GoogleAuthController extends Controller
 
                 if ($user) {
                     Auth::login($user);
-                    return redirect('http://localhost:5173/news-feed');
+                    return redirect(env('FRONTEND_URL'). '/news-feed');
                 } else {
                     $user = User::create([
                         'name' => $google_user->getName(),
@@ -39,7 +39,7 @@ class GoogleAuthController extends Controller
                 Auth::login($user);
             }
 
-            return redirect('http://localhost:5173/thank-you');
+            return redirect(env('FRONTEND_URL') . '/thank-you');
 
         } catch (\Exception $e) {
             dd($e->getMessage());
