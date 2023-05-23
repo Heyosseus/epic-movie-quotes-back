@@ -24,4 +24,4 @@ Route::get('/thank-you', function () {
 });
 
 Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
-Route::get('auth/google/callback', [GoogleAuthController::class, 'callback']);
+Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google-auth-callback');
