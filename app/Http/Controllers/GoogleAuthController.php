@@ -19,22 +19,31 @@ class GoogleAuthController extends Controller
         try {
             $google_user = Socialite::driver('google')->user();
             $user = User::where('google_id', $google_user->getId())->first();
-            if (!$user){
-                $new_user = User::create([
-                    'name' => $google_user->getName(),
-                    'email' => $google_user->getEmail(),
-                    'google_id' => $google_user->getId(),
-                ]);
-                Auth::login($new_user);
 
-                return redirect('/thank-you');
-            }else{
+            if (!$user) {
+                $user = User::where('email', $google_user->getEmail())->first();
+
+                if ($user) {
+                    Auth::login($user);
+                    return redirect('http://localhost:5173/news-feed');
+                } else {
+                    $user = User::create([
+                        'name' => $google_user->getName(),
+                        'email' => $google_user->getEmail(),
+                        'google_id' => $google_user->getId(),
+                    ]);
+
+                    Auth::login($user);
+                }
+            } else {
                 Auth::login($user);
-
-                return redirect('/thank-you');
             }
+
+            return redirect('http://localhost:5173/thank-you');
+
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
     }
+
 }
