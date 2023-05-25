@@ -19,9 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 	return $request->user();
 });
 
-
 Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
+Route::post('/forgot-password', [App\Http\Controllers\RecoveryPasswordController::class, 'store']);
+Route::post('/reset-password', [App\Http\Controllers\RecoveryPasswordController::class, 'update']);
 
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google-auth-callback');

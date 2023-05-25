@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\GoogleAuthController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,8 +19,10 @@ Route::get('/', function () {
 });
 
 Route::get('/thank-you', function () {
-    return view('thank-you');
+	return view('thank-you');
 });
 
-Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
-Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google-auth-callback');
+Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect']);
+Route::get('auth/google/callback', [GoogleAuthController::class, 'callback']);
+Route::post('/forgot-password', [App\Http\Controllers\RecoveryPasswordController::class, 'store']);
+Route::post('/reset-password', [App\Http\Controllers\RecoveryPasswordController::class, 'update']);
