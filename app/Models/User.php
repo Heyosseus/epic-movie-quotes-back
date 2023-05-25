@@ -49,43 +49,12 @@ class User extends Authenticatable
 		'password'          => 'hashed',
 	];
 
-    use HasApiTokens, HasFactory, Notifiable;
+	use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
-
-    public function password(): Attribute
-    {
-        return Attribute::make(
-            set: fn($value) => bcrypt($value)
-        );
-    }
+	public function password(): Attribute
+	{
+		return Attribute::make(
+			set: fn ($value) => bcrypt($value)
+		);
+	}
 }
