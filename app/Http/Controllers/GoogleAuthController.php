@@ -20,7 +20,7 @@ class GoogleAuthController extends Controller
 			$user = User::where('google_id', $google_user->getId())->first();
 
 			if (!$user) {
-				$user = User::where('email', $google_user->get4Email())->first();
+				$user = User::where('email', $google_user->getEmail())->first();
 
 				if ($user) {
 					Auth::login($user);

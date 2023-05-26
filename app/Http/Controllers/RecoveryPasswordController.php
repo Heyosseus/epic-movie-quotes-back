@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RecoveryPasswordRequest;
 use App\Mail\RecoveryPasswordMail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,14 +16,16 @@ class RecoveryPasswordController extends Controller
 		$user = User::where('email', $request->email)->first();
 
 		Mail::to($user->email)->send(new RecoveryPasswordMail($user->token));
-		//            $user->password = Hash::make($request->password);
-		//            $user->save();
+        if($user){
+            $user->password = Hash::make($request->password);
+            $user->save();
+        }
 		return response()->json(['message' => 'password is changed!', 'user' => $user]);
 	}
 
-	public function update(Request $request)
+	public function update(RecoveryPasswordRequest $request)
 	{
-		$user = User::where('email', $request->email)->first();
+	    $user = User::where('email', $request->email)->first();
 
         if($user){
             $user->password = Hash::make($request->password);
