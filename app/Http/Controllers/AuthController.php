@@ -6,11 +6,12 @@ use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
 use App\Mail\AccountActivationMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-	public function register(AuthRegisterRequest $request)
+	public function register(AuthRegisterRequest $request) : object
 	{
 		$user = User::create($request->validated());
 
@@ -21,12 +22,13 @@ class AuthController extends Controller
 
 	public function login(AuthLoginRequest $request)
 	{
-		$attributes = $request->only('email', 'password');
+        Auth::once($request->validated());
 
-		if (auth()->attempt($attributes)) {
-			return response()->json(['message' => 'Logged in']);
-		} else {
-			return response()->json(['message' => 'Invalid credentials'], 401);
-		}
+        $result['Logged in'] = Auth::check();
+
+        if($result['Logged in']){
+            $result['token'] = Auth::user()->createToken('authToken')->plainTextToken;
+        }
+        return $result;
 	}
 }
