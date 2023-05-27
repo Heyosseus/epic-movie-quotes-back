@@ -23,6 +23,7 @@ class RecoveryPasswordRequest extends FormRequest
     {
         return [
             'password'             => 'required|string|min:8|max:15',
+            'password_confirmation' => 'required|same:password',
         ];
     }
 }
