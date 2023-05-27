@@ -20,6 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 	return $request->user();
 });
 
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
+});
+
 Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
 Route::post('/forgot-password', [App\Http\Controllers\RecoveryPasswordController::class, 'store']);
 Route::put('/reset-password', [App\Http\Controllers\RecoveryPasswordController::class, 'update']);
