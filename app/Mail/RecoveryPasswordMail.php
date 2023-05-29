@@ -7,13 +7,10 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 
-class AccountActivationMail extends Mailable
+class RecoveryPasswordMail extends Mailable
 {
 	use Queueable, SerializesModels;
 
-	/**
-	 * Create a new message instance.
-	 */
 	public $token;
 
 	public function __construct($token)
@@ -27,8 +24,8 @@ class AccountActivationMail extends Mailable
 	public function build(): Mailable
 	{
 		//		$token = route('email_verification_reset_password', ['token' => $this->token]);
-		return $this->view('emails.activation', ['token' => $this->token])
-			->subject('Please verify your email address')
+		return $this->view('emails.recovery', ['token' => $this->token])
+			->subject('Reset your password')
 			->with(['token' => $this->token]);
 	}
 }
