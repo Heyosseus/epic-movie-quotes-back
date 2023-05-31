@@ -12,6 +12,10 @@ class Movie extends Model
 
 	protected $guarded = ['id'];
 
+	protected $casts = [
+		'title' => 'array',
+	];
+
 	public function movie(): hasMany
 	{
 		return $this->hasMany(Quotes::class);

@@ -10,9 +10,15 @@ class MovieController extends Controller
 {
 	public function index()
 	{
-		$movies = Movie::orderBy('created_at', 'desc')->get();
-		//		$movies = Movie::all();
-		return response()->json(['movie' => $movies], 200);
+		$movie = Movie::orderBy('created_at', 'desc')->get();
+
+		$query = Movie::query();
+		if (request('search')) {
+			$query->where('genre', 'LIKE', '%' . request('search') . '%');
+		}
+		$movie = $query->get();
+		return response()->json(['movie' => $movie], 200);
+		//		return view('welcome', ['movie' => $movie]);
 	}
 
 	public function show($id)
