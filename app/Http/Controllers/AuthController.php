@@ -7,6 +7,7 @@ use App\Http\Requests\AuthRegisterRequest;
 use App\Mail\AccountActivationMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -29,13 +30,6 @@ class AuthController extends Controller
 
 	public function login(AuthLoginRequest $request)
 	{
-		//		$attrs = $request->validated();
-		//		$user = User::where('email', $attrs['email'])->first();
-		//		if (!$user) {
-		//			return response()->json(['message' => 'User not found!'], 404);
-		//		}
-		//
-		//		return response()->json(['user' => $user], 200);
 		$attrs = $request->validated();
 
 		if (Auth::attempt($attrs)) {
@@ -49,7 +43,12 @@ class AuthController extends Controller
 
 	public function logout()
 	{
-		auth()->user()->tokens()->delete();
-		return response()->json(['message' => 'Logged out!'], 200);
+		try {
+			Auth::guard('web')->logout();
+			return response()->json(['message' => 'Logged out!'], 200);
+		} catch (\Exception $e) {
+			Log::error('Logout error: ' . $e->getMessage());
+			return response()->json(['message' => 'Error occurred during logout'], 500);
+		}
 	}
 }
