@@ -27,6 +27,16 @@ class MovieController extends Controller
 
 		$movie = Movie::create($attr);
 
+		if ($request->hasFile('poster')) {
+			$poster = $request->file('poster');
+			$filename = time() . '.' . $poster->getClientOriginalExtension();
+			$path = $poster->storeAs('public/storage/images', $filename);
+
+			$relativePath = str_replace('public/', '', $path);
+
+			$movie->poster = $relativePath;
+			$movie->save();
+		}
 		return response()->json(['movie' => $movie], 200);
 	}
 

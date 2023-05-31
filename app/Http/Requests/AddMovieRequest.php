@@ -22,14 +22,15 @@ class AddMovieRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'title_en'        => 'required|string',
-			'title_ka'        => 'required|string',
-			'genre'           => 'required|string',
-			'director_en'     => 'required|string',
-			'director_ka'     => 'required|string',
-			'release_date'    => 'required|date',
-			'description_en'  => 'required|string',
-			'description_ka'  => 'required|string',
+			//			'title_en'        => 'required|string',
+			//			'title_ka'        => 'required|string',
+			//			'genre'           => 'required|string',
+			//			'director_en'     => 'required|string',
+			//			'director_ka'     => 'required|string',
+			//			'release_date'    => 'required|date',
+			//			'description_en'  => 'required|string',
+			//			'description_ka'  => 'required|string',
+			'poster'          => 'required|image',
 		];
 	}
 
