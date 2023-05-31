@@ -14,10 +14,10 @@ return new class extends Migration {
 			$table->id();
 			$table->json('title')->nullable();
 			$table->date('release_date')->nullable();
-			$table->text('description')->nullable();
+			$table->json('description')->nullable();
 			$table->string('poster')->nullable();
 			$table->string('genre')->nullable();
-			$table->string('director')->nullable();
+			$table->json('director')->nullable();
 			$table->timestamps();
 		});
 	}

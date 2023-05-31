@@ -11,38 +11,45 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-	public function register(AuthRegisterRequest $request) : object
+	public function register(AuthRegisterRequest $request): object
 	{
+		$attr = $request->validated();
+		$user = User::where('email', $attr['email'])->first();
 
-        $attr = $request->validated();
-        $user = User::where('email', $attr['email'])->first();
-        $user->createToken('authToken')->plainTextToken;
-
-        if($user){
-            return response()->json(['message' => 'User already exists!'], 400);
-        }else{
-            $newUser = User::create($attr);
-            $token = $newUser->createToken('authToken')->plainTextToken;
-        }
+		if ($user) {
+			return response()->json(['message' => 'User already exists!'], 400);
+		} else {
+			$newUser = User::create($attr);
+		}
 
 		Mail::to($newUser->email)->send(new AccountActivationMail($newUser));
-        $newUser->email_verified_at = now();
-		return response()->json(['user' => $newUser, 'token' => $token], 200);
+		$newUser->email_verified_at = now();
+		return response()->json(['user' => $newUser], 200);
 	}
 
 	public function login(AuthLoginRequest $request)
 	{
-        $attrs = $request->validated();
-        $user = User::where('email', $attrs['email'])->first();
-        if(!$user){
-            return response()->json(['message' => 'User not found!'], 404);
-        }
-        $token = $user->createToken('authToken')->plainTextToken;
-        return response()->json(['user' => $user, 'token' => $token], 200);
+		//		$attrs = $request->validated();
+		//		$user = User::where('email', $attrs['email'])->first();
+		//		if (!$user) {
+		//			return response()->json(['message' => 'User not found!'], 404);
+		//		}
+		//
+		//		return response()->json(['user' => $user], 200);
+		$attrs = $request->validated();
+
+		if (Auth::attempt($attrs)) {
+			$user = Auth::user();
+			Auth::login($user);
+			return response()->json(['user' => $user], 200);
+		}
+
+		return response()->json(['message' => 'Invalid credentials'], 401);
 	}
 
-    public function logout(){
-        auth()->user()->tokens()->delete();
-        return response()->json(['message' => 'Logged out!'], 200);
-    }
+	public function logout()
+	{
+		auth()->user()->tokens()->delete();
+		return response()->json(['message' => 'Logged out!'], 200);
+	}
 }
