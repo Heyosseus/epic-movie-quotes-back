@@ -13,7 +13,7 @@ return new class extends Migration {
 		Schema::create('movies', function (Blueprint $table) {
 			$table->id();
 			$table->json('title')->nullable();
-			$table->date('release_date')->nullable();
+			$table->integer('release_date')->nullable();
 			$table->json('description')->nullable();
 			$table->string('poster')->nullable();
 			$table->string('genre')->nullable();

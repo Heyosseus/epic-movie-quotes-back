@@ -27,7 +27,7 @@ class AddMovieRequest extends FormRequest
 			'genre'           => 'required|string',
 			'director_en'     => 'required|string',
 			'director_ka'     => 'required|string',
-			'release_date'    => 'required|date',
+			'release_date'    => 'required|integer',
 			'description_en'  => 'required|string',
 			'description_ka'  => 'required|string',
 			'poster'          => 'required|image',
@@ -37,7 +37,7 @@ class AddMovieRequest extends FormRequest
 	protected function prepareForValidation(): void
 	{
 		$this->merge([
-			'title'       => json_encode(['en' => $this->title_en, 'ka' => $this->title_ka]),
+			'title'       => ['en' => $this->title_en, 'ka' => $this->title_ka],
 			'director'    => json_encode(['en' => $this->director_en, 'ka' => $this->director_ka]),
 			'description' => json_encode(['en' => $this->description_en, 'ka' => $this->description_ka]),
 		]);
