@@ -34,3 +34,4 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->
 // movie routes
 Route::get('/movies', [App\Http\Controllers\MovieController::class, 'index']);
 Route::post('/add-movies', [App\Http\Controllers\MovieController::class, 'store']);
+Route::get('/movies/{id}', [App\Http\Controllers\MovieController::class, 'show']);
