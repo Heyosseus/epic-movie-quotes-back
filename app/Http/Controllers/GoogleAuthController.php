@@ -27,9 +27,10 @@ class GoogleAuthController extends Controller
 					return redirect(env('FRONTEND_URL') . '/news-feed');
 				} else {
 					$user = User::create([
-						'name'      => $google_user->getName(),
-						'email'     => $google_user->getEmail(),
-						'google_id' => $google_user->getId(),
+						'name'              => $google_user->getName(),
+						'email'             => $google_user->getEmail(),
+						'google_id'         => $google_user->getId(),
+						'email_verified_at' => now(),
 					]);
 
 					Auth::login($user);

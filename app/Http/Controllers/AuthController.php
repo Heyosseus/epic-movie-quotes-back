@@ -25,6 +25,7 @@ class AuthController extends Controller
 
 		Mail::to($newUser->email)->send(new AccountActivationMail($newUser));
 		$newUser->email_verified_at = now();
+		$newUser->save();
 		return response()->json(['user' => $newUser], 200);
 	}
 
