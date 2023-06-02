@@ -35,3 +35,7 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->
 Route::get('/movies', [App\Http\Controllers\MovieController::class, 'index']);
 Route::post('/add-movies', [App\Http\Controllers\MovieController::class, 'store']);
 Route::get('/movies/{id}', [App\Http\Controllers\MovieController::class, 'show']);
+
+// quote routes
+Route::get('/quotes/{movieId}', [App\Http\Controllers\QuotesController::class, 'index']);
+Route::post('/add-quotes', [App\Http\Controllers\QuotesController::class, 'store']);
