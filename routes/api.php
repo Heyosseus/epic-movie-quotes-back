@@ -39,3 +39,6 @@ Route::get('/movies/{id}', [App\Http\Controllers\MovieController::class, 'show']
 // quote routes
 Route::get('/quotes/{movieId}', [App\Http\Controllers\QuotesController::class, 'index']);
 Route::post('/add-quotes', [App\Http\Controllers\QuotesController::class, 'store']);
+
+//profile
+Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update']);
