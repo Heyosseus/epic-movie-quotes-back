@@ -19,5 +19,15 @@
         <a href="{{route('google-auth')}}">
             google authorization
         </a>
+        @foreach ($movie as $movies)
+        <div>
+
+            <p>{{$movies->genre}}</p>
+
+        </div>
+        @endforeach
+    <div>
+
+    </div>
     </body>
 </html>
