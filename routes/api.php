@@ -42,7 +42,7 @@ Route::controller(\App\Http\Controllers\GoogleAuthController::class)->group(func
 Route::controller(\App\Http\Controllers\MovieController::class)->group(function () {
 	Route::get('/movies', [App\Http\Controllers\MovieController::class, 'index']);
 	Route::post('/add-movies', [App\Http\Controllers\MovieController::class, 'store']);
-	Route::get('/movies/{id}', [App\Http\Controllers\MovieController::class, 'show']);
+	Route::get('/movies/{movie}', [App\Http\Controllers\MovieController::class, 'show']);
 });
 
 // quote routes

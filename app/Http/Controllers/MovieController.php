@@ -20,10 +20,10 @@ class MovieController extends Controller
 		return response()->json(['movie' => $movie], 200);
 	}
 
-	public function show($id)
+	public function show(Movie $movie)
 	{
-		$movie = Movie::find($id);
-		return response()->json(['movie' => $movie], 200);
+		$movies = Movie::find($movie->id);
+		return response()->json(['movie' => $movies], 200);
 	}
 
 	public function store(AddMovieRequest $request)
