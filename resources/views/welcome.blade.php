@@ -16,16 +16,16 @@
         </style>
     </head>
     <body class="antialiased">
-        <a href="{{route('google-auth')}}">
-            google authorization
-        </a>
-        @foreach ($movie as $movies)
-        <div>
+{{--        <a href="{{route('google-auth')}}">--}}
+{{--            google authorization--}}
+{{--        </a>--}}
+{{--        @foreach ($movie as $movies)--}}
+{{--        <div>--}}
 
-            <p>{{$movies->genre}}</p>
+{{--            <p>{{$movies->genre}}</p>--}}
 
-        </div>
-        @endforeach
+{{--        </div>--}}
+{{--        @endforeach--}}
     <div>
 
     </div>
