@@ -35,11 +35,10 @@ class AuthController extends Controller
 
 		if (Auth::attempt($attrs)) {
 			$user = Auth::user();
-			Auth::login($user);
 			return response()->json(['user' => $user], 200);
+		} else {
+			return response()->json(['message' => 'Invalid credentials'], 401);
 		}
-
-		return response()->json(['message' => 'Invalid credentials'], 401);
 	}
 
 	public function logout()
