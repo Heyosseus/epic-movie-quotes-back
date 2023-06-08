@@ -16,7 +16,8 @@ return [
 
 	'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
 		'%s%s',
-		'https://epic-movie-quotes.rati-rukhadze.redberryinternship.ge, localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+		'epic-movie-quotes.rati-rukhadze.redberryinternship.ge, epic-movie-quotes-api.rati-rukhadze.redberryinternship.ge,
+		localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
 		Sanctum::currentApplicationUrlWithPort(),
 	))),
 

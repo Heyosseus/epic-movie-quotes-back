@@ -18,11 +18,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 	return $request->user();
 });
 
-//Route::group(['middleware' => ['auth:sanctum']], function () {
-//	Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
-//});
+Route::group(['middleware' => ['auth:sanctum']], function () {
+	Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
+});
 
-Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
 Route::controller(\App\Http\Controllers\AuthController::class)->group(function () {
 	Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
 	Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
