@@ -53,3 +53,6 @@ Route::controller(\App\Http\Controllers\QuotesController::class)->group(function
 
 //profile
 Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update']);
+
+//genres
+Route::get('/genres', [App\Http\Controllers\GenresController::class, 'index']);
