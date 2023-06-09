@@ -34,13 +34,14 @@ class MovieController extends Controller
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');
 			$filename = time() . '.' . $poster->getClientOriginalExtension();
-			$path = $poster->storeAs('public/storage/images', $filename);
+			$path = $poster->storeAs('public/images', $filename);
 
 			$relativePath = str_replace('public/', '', $path);
 
 			$movie->poster = $relativePath;
 			$movie->save();
 		}
+
 		return response()->json(['movie' => $movie], 200);
 	}
 
