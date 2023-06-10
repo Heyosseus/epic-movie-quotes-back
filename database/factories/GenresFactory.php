@@ -18,58 +18,58 @@ class GenresFactory extends Factory
 	{
 		$genres = [
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Action',
 					'ka' => 'მოქმედება',
-				]),
+				],
 			],
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Comedy',
 					'ka' => 'კომედია',
-				]),
+				],
 			],
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Drama',
 					'ka' => 'დრამა',
-				]),
+				],
 			],
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Fantasy',
 					'ka' => 'ფანტასტიკა',
-				]),
+				],
 			],
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Horror',
 					'ka' => 'საშინელება',
-				]),
+				],
 			],
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Mystery',
 					'ka' => 'მისტიკა',
-				]),
+				],
 			],
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Romance',
 					'ka' => 'რომანი',
-				]),
+				],
 			],
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Thriller',
 					'ka' => 'თრილერი',
-				]),
+				],
 			],
 			[
-				'name' => json_encode([
+				'name' => [
 					'en' => 'Western',
 					'ka' => 'ვესტერნი',
-				]),
+				],
 			],
 		];
 		return $genres[$this->faker->numberBetween(0, count($genres) - 1)];

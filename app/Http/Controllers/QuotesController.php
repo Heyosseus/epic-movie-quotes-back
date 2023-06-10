@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuoteRequest;
 use App\Models\Quotes;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use League\CommonMark\Extension\SmartPunct\Quote;
 
 class QuotesController extends Controller
 {
-	public function index($movieId)
+	public function index($movieId): JsonResponse
 	{
 		$quote = Quotes::where('movie_id', $movieId)
 			->orderBy('created_at', 'desc')
@@ -18,7 +19,7 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function store(AddQuoteRequest $request)
+	public function store(AddQuoteRequest $request): JsonResponse
 	{
 		$attr = $request->all();
 
