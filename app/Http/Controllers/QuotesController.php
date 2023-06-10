@@ -27,7 +27,7 @@ class QuotesController extends Controller
 		if ($request->hasFile('thumbnail')) {
 			$thumbnail = $request->file('thumbnail');
 			$filename = time() . '.' . $thumbnail->getClientOriginalExtension();
-			$path = $thumbnail->storeAs('public/storage/images', $filename);
+			$path = $thumbnail->storeAs('public/images', $filename);
 
 			$relativePath = str_replace('public/', '', $path);
 

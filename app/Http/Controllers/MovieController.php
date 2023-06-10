@@ -36,7 +36,7 @@ class MovieController extends Controller
 			$filename = time() . '.' . $poster->getClientOriginalExtension();
 			$path = $poster->storeAs('public/images', $filename);
 
-			$relativePath = str_replace('public/', '', $path);
+			$relativePath = str_replace('/public', '', $path);
 
 			$movie->poster = $relativePath;
 			$movie->save();
