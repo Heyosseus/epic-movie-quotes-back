@@ -59,3 +59,13 @@ Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'
 Route::get('/genres', [App\Http\Controllers\GenresController::class, 'index']);
 
 Route::post('/add-genres/{movieId}', [App\Http\Controllers\MovieController::class, 'addGenres']);
+
+Route::get('/check-session', function () {
+	$isSessionActive = false;
+
+	if (auth()->check()) {
+		$isSessionActive = true;
+	}
+
+	return response()->json(['isSessionActive' => $isSessionActive]);
+});
