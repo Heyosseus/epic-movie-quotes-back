@@ -62,10 +62,14 @@ Route::post('/add-genres/{movieId}', [App\Http\Controllers\MovieController::clas
 
 Route::get('/check-session', function () {
 	$isSessionActive = false;
+	$isGoogleAuthenticated = session('google_authenticated') === true;
 
 	if (auth()->check()) {
 		$isSessionActive = true;
 	}
 
-	return response()->json(['isSessionActive' => $isSessionActive]);
+	return response()->json([
+		'isSessionActive'       => $isSessionActive,
+		'isGoogleAuthenticated' => $isGoogleAuthenticated,
+	]);
 });
