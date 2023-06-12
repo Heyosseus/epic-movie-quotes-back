@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Movie extends Model
@@ -19,5 +20,10 @@ class Movie extends Model
 	public function movie(): hasMany
 	{
 		return $this->hasMany(Quotes::class);
+	}
+
+	public function genres(): BelongsToMany
+	{
+		return $this->belongsToMany(Genres::class, 'genres_movie', 'movie_id', 'genre_id')->withTimestamps();
 	}
 }

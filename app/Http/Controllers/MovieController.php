@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMovieRequest;
 use App\Models\Movie;
-use http\Env\Request;
+use http\Client\Request;
+use Illuminate\Http\JsonResponse;
 
 class MovieController extends Controller
 {
-	public function index()
+	public function index(): JsonResponse
 	{
 		$movie = Movie::orderBy('created_at', 'desc')->get();
 
@@ -20,12 +21,19 @@ class MovieController extends Controller
 		return response()->json(['movie' => $movie], 200);
 	}
 
-	public function show(Movie $movie)
+	public function addGenres(\Illuminate\Http\Request $request, Movie $movie): JsonResponse
+	{
+		$genres = $request->input('genres');
+		$movie->genres()->attach($genres);
+		return response()->json(['movie' => $movie], 200);
+	}
+
+	public function show(Movie $movie): JsonResponse
 	{
 		return response()->json(['movie' => $movie], 200);
 	}
 
-	public function store(AddMovieRequest $request)
+	public function store(AddMovieRequest $request): JsonResponse
 	{
 		$attr = $request->all();
 
@@ -34,17 +42,18 @@ class MovieController extends Controller
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');
 			$filename = time() . '.' . $poster->getClientOriginalExtension();
-			$path = $poster->storeAs('public/storage/images', $filename);
+			$path = $poster->storeAs('public/images', $filename);
 
 			$relativePath = str_replace('public/', '', $path);
 
 			$movie->poster = $relativePath;
 			$movie->save();
 		}
+
 		return response()->json(['movie' => $movie], 200);
 	}
 
-	public function update(Request $request, $id)
+	public function update(Request $request, $id): JsonResponse
 	{
 		$attr = $request->all();
 		$movie = Movie::find($id);
@@ -52,7 +61,7 @@ class MovieController extends Controller
 		return response()->json(['movie' => $movie], 200);
 	}
 
-	public function destroy($id)
+	public function destroy($id): JsonResponse
 	{
 		Movie::destroy($id);
 		return response()->json(['message' => 'Movie deleted successfully'], 200);

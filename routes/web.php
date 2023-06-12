@@ -15,11 +15,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-	return view('welcome');
-});
+	$movie = \App\Models\Movie::get();
 
-Route::get('/thank-you', function () {
-	return view('thank-you');
+	return view('welcome');
 });
 
 Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect']);
