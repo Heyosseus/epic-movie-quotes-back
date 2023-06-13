@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMovieRequest;
 use App\Models\Movie;
-use http\Client\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
@@ -21,13 +21,6 @@ class MovieController extends Controller
 		return response()->json(['movie' => $movie], 200);
 	}
 
-	public function addGenres(\Illuminate\Http\Request $request, Movie $movie): JsonResponse
-	{
-		$genres = $request->input('genres');
-		$movie->genres()->attach($genres);
-		return response()->json(['movie' => $movie], 200);
-	}
-
 	public function show(Movie $movie): JsonResponse
 	{
 		return response()->json(['movie' => $movie], 200);
@@ -38,6 +31,9 @@ class MovieController extends Controller
 		$attr = $request->all();
 
 		$movie = Movie::create($attr);
+		$genres = json_decode($request->input('genre'));
+
+		$movie->genres()->attach($genres);
 
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');

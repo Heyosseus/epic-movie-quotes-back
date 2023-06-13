@@ -24,7 +24,7 @@ class AddMovieRequest extends FormRequest
 		return [
 			'title_en'        => 'required|string',
 			'title_ka'        => 'required|string',
-			'genre'           => 'required|json',
+			'genre'           => 'required',
 			'director_en'     => 'required|string',
 			'director_ka'     => 'required|string',
 			'release_date'    => 'required|integer',

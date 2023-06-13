@@ -17,13 +17,13 @@ class Movie extends Model
 		'title' => 'array',
 	];
 
-	public function movie(): hasMany
+	public function quotes(): hasMany
 	{
 		return $this->hasMany(Quotes::class);
 	}
 
 	public function genres(): BelongsToMany
 	{
-		return $this->belongsToMany(Genres::class, 'genres_movie', 'movie_id', 'genre_id')->withTimestamps();
+		return $this->belongsToMany(Genre::class, 'genre_movie', 'movie_id', 'genre_id')->withTimestamps();
 	}
 }
