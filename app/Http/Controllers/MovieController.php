@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMovieRequest;
-use App\Http\Requests\UpdateMovieRequest;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
 
@@ -35,35 +34,6 @@ class MovieController extends Controller
 
 		$movie->genres()->attach($genres);
 
-		$this->extracted($request, $movie);
-
-		return response()->json(['movie' => $movie], 200);
-	}
-
-	public function update(UpdateMovieRequest $request, Movie $movie): JsonResponse
-	{
-		$attr = $request->validated();
-
-		$movie->update($attr);
-		$this->extracted($request, $movie);
-
-		return response()->json(['movie' => $movie], 200);
-	}
-
-	public function destroy($id): JsonResponse
-	{
-		Movie::destroy($id);
-		return response()->json(['message' => 'Movie deleted successfully'], 200);
-	}
-
-	/**
-	 * @param AddMovieRequest $request
-	 * @param Movie           $movie
-	 *
-	 * @return void
-	 */
-	public function extracted(UpdateMovieRequest $request, Movie $movie): void
-	{
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');
 			$filename = time() . '.' . $poster->getClientOriginalExtension();
@@ -74,5 +44,31 @@ class MovieController extends Controller
 			$movie->poster = $relativePath;
 			$movie->save();
 		}
+		return response()->json(['movie' => $movie], 200);
+	}
+
+	public function update(AddMovieRequest $request, Movie $movie): JsonResponse
+	{
+		$attr = $request->validated();
+
+		$movie->update($attr);
+		if ($request->hasFile('poster')) {
+			$poster = $request->file('poster');
+			$filename = time() . '.' . $poster->getClientOriginalExtension();
+			$path = $poster->storeAs('public/images', $filename);
+
+			$relativePath = str_replace('public/', '', $path);
+
+			$movie->poster = $relativePath;
+			$movie->save();
+		}
+
+		return response()->json(['movie' => $movie], 200);
+	}
+
+	public function destroy($id): JsonResponse
+	{
+		Movie::destroy($id);
+		return response()->json(['message' => 'Movie deleted successfully'], 200);
 	}
 }

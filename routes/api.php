@@ -52,6 +52,7 @@ Route::controller(\App\Http\Controllers\QuotesController::class)->group(function
 	Route::get('/quotes/{movieId}', [App\Http\Controllers\QuotesController::class, 'index']);
 	Route::post('/add-quotes', [App\Http\Controllers\QuotesController::class, 'store']);
 	Route::post('/update-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'update']);
+	Route::get('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'show']);
 	Route::delete('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'destroy']);
 });
 
