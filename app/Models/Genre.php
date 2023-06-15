@@ -4,16 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Quotes extends Model
+class Genre extends Model
 {
 	use HasFactory;
 
 	protected $guarded = ['id'];
 
-	public function movie(): BelongsTo
+	public function movies()
 	{
-		return $this->belongsTo(Movie::class);
+		return $this->belongsToMany(Movie::class, 'genre_movie', 'genre_id', 'movie_id')->withTimestamps();
 	}
 }

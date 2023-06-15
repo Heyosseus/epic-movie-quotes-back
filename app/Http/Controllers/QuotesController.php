@@ -38,9 +38,9 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function show($id)
+	public function show(Quotes $quote)
 	{
-		$quote = Quote::findOrFail($id);
+		return response()->json(['quote' => $quote], 200);
 	}
 
 	public function edit($id)
@@ -57,8 +57,8 @@ class QuotesController extends Controller
 
 	public function destroy($id)
 	{
-		$quote = Quote::findOrFail($id);
+		Quotes::destroy($id);
 
-		$quote->delete();
+		return response()->json(['message' => 'Quote deleted successfully'], 200);
 	}
 }

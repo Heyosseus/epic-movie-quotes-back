@@ -21,13 +21,13 @@ class MovieFactory extends Factory
 				'en' => $this->faker->sentence(3),
 				'ka' => $this->faker->sentence(3),
 			]),
-			'release_date' => $this->faker->date(),
+			'release_date' => $this->faker->numberBetween(),
 			'description'  => json_encode([
 				'en' => $this->faker->paragraph(3),
 				'ka' => $this->faker->paragraph(3),
 			]),
 			'poster'   => $this->faker->imageUrl(),
-			'genre'    => $this->faker->word(),
+
 			'director' => json_encode([
 				'en' => $this->faker->name(),
 				'ka' => $this->faker->name(),

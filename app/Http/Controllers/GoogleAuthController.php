@@ -24,6 +24,7 @@ class GoogleAuthController extends Controller
 
 				if ($user) {
 					Auth::login($user);
+					session(['google_authenticated' => true]);
 					return redirect(env('FRONTEND_URL') . '/news-feed');
 				} else {
 					$user = User::create([
@@ -32,10 +33,12 @@ class GoogleAuthController extends Controller
 						'google_id'         => $google_user->getId(),
 						'email_verified_at' => now(),
 					]);
+					session(['google_authenticated' => true]);
 
 					Auth::login($user);
 				}
 			} else {
+				session(['google_authenticated' => true]);
 				Auth::login($user);
 			}
 

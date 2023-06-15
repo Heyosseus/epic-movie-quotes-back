@@ -42,6 +42,7 @@ Route::controller(\App\Http\Controllers\GoogleAuthController::class)->group(func
 Route::controller(\App\Http\Controllers\MovieController::class)->group(function () {
 	Route::get('/movies', [App\Http\Controllers\MovieController::class, 'index']);
 	Route::post('/add-movies', [App\Http\Controllers\MovieController::class, 'store']);
+	Route::post('/update-movies/{movie}', [App\Http\Controllers\MovieController::class, 'update']);
 	Route::get('/movies/{movie}', [App\Http\Controllers\MovieController::class, 'show']);
 	Route::delete('/movies/{movie}', [App\Http\Controllers\MovieController::class, 'destroy']);
 });
@@ -50,6 +51,9 @@ Route::controller(\App\Http\Controllers\MovieController::class)->group(function 
 Route::controller(\App\Http\Controllers\QuotesController::class)->group(function () {
 	Route::get('/quotes/{movieId}', [App\Http\Controllers\QuotesController::class, 'index']);
 	Route::post('/add-quotes', [App\Http\Controllers\QuotesController::class, 'store']);
+	Route::post('/update-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'update']);
+	Route::get('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'show']);
+	Route::delete('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'destroy']);
 });
 
 //profile
@@ -58,14 +62,18 @@ Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'
 //genres
 Route::get('/genres', [App\Http\Controllers\GenresController::class, 'index']);
 
-Route::post('/add-genres/{movieId}', [App\Http\Controllers\MovieController::class, 'addGenres']);
+Route::post('/add-genres', [App\Http\Controllers\GenresController::class, 'addGenres']);
 
 Route::get('/check-session', function () {
 	$isSessionActive = false;
+	$isGoogleAuthenticated = session('google_authenticated') === true;
 
 	if (auth()->check()) {
 		$isSessionActive = true;
 	}
 
-	return response()->json(['isSessionActive' => $isSessionActive]);
+	return response()->json([
+		'isSessionActive'       => $isSessionActive,
+		'isGoogleAuthenticated' => $isGoogleAuthenticated,
+	]);
 });
