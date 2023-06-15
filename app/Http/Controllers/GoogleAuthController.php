@@ -25,7 +25,7 @@ class GoogleAuthController extends Controller
 				if ($user) {
 					Auth::login($user);
 					session(['google_authenticated' => true]);
-					return redirect('http://localhost:5173/news-feed');
+					return redirect(env('FRONTEND_URL') . '/news-feed');
 				} else {
 					$user = User::create([
 						'name'              => $google_user->getName(),
