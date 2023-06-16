@@ -18,6 +18,18 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
+	public function newsFeed(): JsonResponse
+	{
+		$quotes = Quotes::with('movie', 'movie.user')
+			->orderBy('created_at', 'desc')
+			->take(10)
+			->get();
+
+		$quotes->load('movie', 'movie.user');
+
+		return response()->json(['quotes' => $quotes], 200);
+	}
+
 	public function store(AddQuoteRequest $request): JsonResponse
 	{
 		$attr = $request->all();
@@ -44,15 +56,6 @@ class QuotesController extends Controller
 
 	public function update(UpdateQuoteRequest $request, $quoteId)
 	{
-		//		$attributes = $request->all();
-		//
-		//		$quotes->update([
-		//			'body'     => $attributes['body'],
-		//			'movie_id' => $attributes['movie_id'],
-		//		]);
-		//
-
-		//		$quotes->save();
 		$quote = Quotes::find($quoteId);
 
 		$quote->body = $request->input('body');
