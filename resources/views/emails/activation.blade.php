@@ -9,7 +9,7 @@
     <img src="https://i.ibb.co/2yVS2dx/quotes-Icon.png" alt="quote icon" style="border:0; display:flex; align-items:center; justify-content: center; margin: auto">
     <p style="color: #DDCCAA; text-align: center">MOVIE QUOTES</p>
     <h1 style="color: #fff; font-size: 16px;
-     margin-top: 8px; text-align: left">Hola Rati</h1>
+     margin-top: 8px; text-align: left">Hola </h1>
 
     <h1 style="color: #fff; font-size:16px;
      margin-top: 14px; text-align: left">Thanks for joining Movie quotes! We really appreciate it. Please click the button below to verify your account:</h1>
