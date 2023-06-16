@@ -31,6 +31,7 @@ class AddMovieRequest extends FormRequest
 			'description_en'  => 'required|string',
 			'description_ka'  => 'required|string',
 			'poster'          => 'required|image',
+			'user_id'         => 'required',
 		];
 	}
 
