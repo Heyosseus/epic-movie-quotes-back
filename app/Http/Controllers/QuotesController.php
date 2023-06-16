@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuoteRequest;
+use App\Http\Requests\UpdateQuoteRequest;
 use App\Models\Quotes;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use League\CommonMark\Extension\SmartPunct\Quote;
 
 class QuotesController extends Controller
 {
@@ -43,16 +42,36 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function edit($id)
+	public function update(UpdateQuoteRequest $request, $quoteId)
 	{
-		$quote = Quote::findOrFail($id);
-	}
+		//		$attributes = $request->all();
+		//
+		//		$quotes->update([
+		//			'body'     => $attributes['body'],
+		//			'movie_id' => $attributes['movie_id'],
+		//		]);
+		//
 
-	public function update($id, Request $request)
-	{
-		$quote = Quote::findOrFail($id);
-		$quote->body = $request->body;
+		//		$quotes->save();
+		$quote = Quotes::find($quoteId);
+
+		$quote->body = $request->input('body');
+
+		$quote->movie_id = $request->input('movie_id');
+
+		if ($request->hasFile('thumbnail')) {
+			$thumbnail = $request->file('thumbnail');
+			$filename = time() . '.' . $thumbnail->getClientOriginalExtension();
+			$path = $thumbnail->storeAs('public/images', $filename);
+
+			$relativePath = str_replace('public/', '', $path);
+
+			$quote->thumbnail = $relativePath;
+			$quote->save();
+		}
 		$quote->save();
+
+		return response()->json(['quote' => $quote], 200);
 	}
 
 	public function destroy($id)
