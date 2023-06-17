@@ -41,6 +41,7 @@ Route::controller(\App\Http\Controllers\GoogleAuthController::class)->group(func
 // movie routes
 Route::controller(\App\Http\Controllers\MovieController::class)->group(function () {
 	Route::get('/movies', [App\Http\Controllers\MovieController::class, 'index']);
+	Route::get('/search-movies/{query}', [App\Http\Controllers\MovieController::class, 'searchMovies']);
 	Route::post('/add-movies', [App\Http\Controllers\MovieController::class, 'store']);
 	Route::post('/update-movies/{movie}', [App\Http\Controllers\MovieController::class, 'update']);
 	Route::get('/movies/{movie}', [App\Http\Controllers\MovieController::class, 'show']);
@@ -50,6 +51,7 @@ Route::controller(\App\Http\Controllers\MovieController::class)->group(function 
 // quote routes
 Route::controller(\App\Http\Controllers\QuotesController::class)->group(function () {
 	Route::get('/quotes/{movieId}', [App\Http\Controllers\QuotesController::class, 'index']);
+	Route::get('/search-quotes/{query}', [App\Http\Controllers\QuotesController::class, 'searchQuotes']);
 	Route::get('/news-feed', [App\Http\Controllers\QuotesController::class, 'newsFeed']);
 	Route::post('/add-quotes', [App\Http\Controllers\QuotesController::class, 'store']);
 	Route::post('/update-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'update']);

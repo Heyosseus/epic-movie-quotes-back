@@ -6,6 +6,7 @@ use App\Http\Requests\AddQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
 use App\Models\Quotes;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class QuotesController extends Controller
 {
@@ -16,6 +17,12 @@ class QuotesController extends Controller
 			->get();
 
 		return response()->json(['quote' => $quote], 200);
+	}
+
+	public function searchQuotes(Request $request, $query)
+	{
+		$quotes = Quotes::where('body', 'LIKE', '%' . $query . '%')->get();
+		return response()->json($quotes);
 	}
 
 	public function newsFeed(): JsonResponse
