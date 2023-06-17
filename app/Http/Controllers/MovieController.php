@@ -17,10 +17,15 @@ class MovieController extends Controller
 			return response()->json(['error' => 'User not found'], 404);
 		}
 
-		$movies = $user->movies()
+		$query = $user->movies()
 			->with('quotes', 'genres', 'user')
-			->orderBy('created_at', 'desc')
-			->get();
+			->orderBy('created_at', 'desc');
+
+		if (request('search')) {
+			$query->where('title', 'LIKE', '%' . request('search') . '%');
+		}
+
+		$movies = $query->get();
 
 		return response()->json(['movies' => $movies], 200);
 	}
