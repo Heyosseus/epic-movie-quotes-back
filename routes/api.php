@@ -58,6 +58,14 @@ Route::controller(\App\Http\Controllers\QuotesController::class)->group(function
 	Route::get('/show-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'show']);
 	Route::delete('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'destroy']);
 });
+//comments
+Route::controller(\App\Http\Controllers\CommentsController::class)->group(function () {
+	Route::get('/comments/{quoteId}', [App\Http\Controllers\CommentsController::class, 'index']);
+	Route::post('/add-comments', [App\Http\Controllers\CommentsController::class, 'store']);
+	Route::post('/update-comments/{comment}', [App\Http\Controllers\CommentsController::class, 'update']);
+	Route::get('/show-comments/{comment}', [App\Http\Controllers\CommentsController::class, 'show']);
+	Route::delete('/comments/{comment}', [App\Http\Controllers\CommentsController::class, 'destroy']);
+});
 
 //profile
 Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update']);
@@ -67,16 +75,5 @@ Route::get('/genres', [App\Http\Controllers\GenresController::class, 'index']);
 
 Route::post('/add-genres', [App\Http\Controllers\GenresController::class, 'addGenres']);
 
-Route::get('/check-session', function () {
-	$isSessionActive = false;
-	$isGoogleAuthenticated = session('google_authenticated') === true;
-
-	if (auth()->check()) {
-		$isSessionActive = true;
-	}
-
-	return response()->json([
-		'isSessionActive'       => $isSessionActive,
-		'isGoogleAuthenticated' => $isGoogleAuthenticated,
-	]);
-});
+// session
+Route::get('/check-session', [App\Http\Controllers\SessionController::class, 'checkSession']);
