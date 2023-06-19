@@ -18,8 +18,18 @@ class Quotes extends Model
 		return $this->belongsTo(Movie::class);
 	}
 
+	public function user(): BelongsTo
+	{
+		return $this->belongsTo(User::class, 'user_id', 'id');
+	}
+
 	public function comments(): HasMany
 	{
 		return $this->hasMany(Comments::class, 'quote_id', 'id');
+	}
+
+	public function likes(): HasMany
+	{
+		return $this->hasMany(Likes::class, 'quote_id', 'id');
 	}
 }

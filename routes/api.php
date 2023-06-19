@@ -62,9 +62,11 @@ Route::controller(\App\Http\Controllers\QuotesController::class)->group(function
 Route::controller(\App\Http\Controllers\CommentsController::class)->group(function () {
 	Route::get('/comments/{quoteId}', [App\Http\Controllers\CommentsController::class, 'index']);
 	Route::post('/add-comments', [App\Http\Controllers\CommentsController::class, 'store']);
-	Route::post('/update-comments/{comment}', [App\Http\Controllers\CommentsController::class, 'update']);
-	Route::get('/show-comments/{comment}', [App\Http\Controllers\CommentsController::class, 'show']);
-	Route::delete('/comments/{comment}', [App\Http\Controllers\CommentsController::class, 'destroy']);
+});
+//likes
+Route::controller(\App\Http\Controllers\LikesController::class)->group(function () {
+	Route::get('/likes/{quoteId}', [App\Http\Controllers\LikesController::class, 'index']);
+	Route::post('/add-likes', [App\Http\Controllers\LikesController::class, 'store']);
 });
 
 //profile

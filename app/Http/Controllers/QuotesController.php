@@ -27,30 +27,15 @@ class QuotesController extends Controller
 
 	public function newsFeed(): JsonResponse
 	{
-		$quotes = Quotes::with('movie', 'movie.user', 'comments')
+		$quotes = Quotes::with('movie', 'user', 'comments', 'likes')
 		->orderBy('created_at', 'desc')
 			->take(10)
 			->get();
 
-		$quotes->load('movie', 'movie.user', 'comments');
+		$quotes->load('movie', 'user', 'comments', 'likes');
 
 		return response()->json(['quotes' => $quotes], 200);
 	}
-//public function newsFeed(): JsonResponse
-//{
-//	//$searchResults = Quotes::where('body', 'LIKE', '%' . $query . '%')->get();
-//
-//	$quotes = Quotes::with('movie', 'movie.user')
-//		->orderBy('created_at', 'desc')
-//		->take(10)
-//		->get();
-//
-//	$quotes->load('movie', 'movie.user');
-//
-//	return response()->json([
-//		'quotes'        => $quotes,
-//	], 200);
-//}
 
 	public function store(AddQuoteRequest $request): JsonResponse
 	{
