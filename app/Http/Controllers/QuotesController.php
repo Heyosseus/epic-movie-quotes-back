@@ -12,9 +12,7 @@ class QuotesController extends Controller
 {
 	public function index($movieId): JsonResponse
 	{
-		$quote = Quotes::where('movie_id', $movieId)
-			->orderBy('created_at', 'desc')
-			->get();
+		$quote = Quotes::with('comments', 'likes')->where('movie_id', $movieId)->orderBy('created_at', 'desc')->get();
 
 		return response()->json(['quote' => $quote], 200);
 	}
