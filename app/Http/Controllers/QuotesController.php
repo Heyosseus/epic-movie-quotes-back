@@ -27,12 +27,12 @@ class QuotesController extends Controller
 
 	public function newsFeed(): JsonResponse
 	{
-		$quotes = Quotes::with('movie', 'user', 'comments', 'likes')
+		$quotes = Quotes::with('movie', 'user', 'comments', 'likes', 'comments.user')
 		->orderBy('created_at', 'desc')
 			->take(10)
 			->get();
 
-		$quotes->load('movie', 'user', 'comments', 'likes');
+		$quotes->load('movie', 'user', 'comments', 'likes', 'comments.user');
 
 		return response()->json(['quotes' => $quotes], 200);
 	}
