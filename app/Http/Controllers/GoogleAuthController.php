@@ -41,7 +41,7 @@ class GoogleAuthController extends Controller
 				session(['google_authenticated' => true]);
 				Auth::login($user);
 			}
-
+			session(['google_authenticated' => true]);
 			return redirect(env('FRONTEND_URL') . '/thank-you');
 		} catch (\Exception $e) {
 			dd($e->getMessage());

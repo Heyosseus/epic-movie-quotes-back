@@ -3,20 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuoteRequest;
+use App\Http\Requests\UpdateQuoteRequest;
 use App\Models\Quotes;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use League\CommonMark\Extension\SmartPunct\Quote;
 
 class QuotesController extends Controller
 {
 	public function index($movieId): JsonResponse
 	{
-		$quote = Quotes::where('movie_id', $movieId)
-			->orderBy('created_at', 'desc')
-			->get();
+		$quote = Quotes::with('comments', 'likes')->where('movie_id', $movieId)->orderBy('created_at', 'desc')->get();
 
 		return response()->json(['quote' => $quote], 200);
+	}
+
+	public function searchQuotes(Request $request, $query)
+	{
+		$quotes = Quotes::where('body', 'LIKE', '%' . $query . '%')->get();
+		return response()->json($quotes);
+	}
+
+	public function newsFeed(): JsonResponse
+	{
+		$quotes = Quotes::with('movie', 'user', 'comments', 'likes', 'comments.user')
+		->orderBy('created_at', 'desc')
+			->take(10)
+			->get();
+
+		$quotes->load('movie', 'user', 'comments', 'likes', 'comments.user');
+
+		return response()->json(['quotes' => $quotes], 200);
 	}
 
 	public function store(AddQuoteRequest $request): JsonResponse
@@ -43,16 +59,27 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function edit($id)
+	public function update(UpdateQuoteRequest $request, $quoteId)
 	{
-		$quote = Quote::findOrFail($id);
-	}
+		$quote = Quotes::find($quoteId);
 
-	public function update($id, Request $request)
-	{
-		$quote = Quote::findOrFail($id);
-		$quote->body = $request->body;
+		$quote->body = $request->input('body');
+
+		$quote->movie_id = $request->input('movie_id');
+
+		if ($request->hasFile('thumbnail')) {
+			$thumbnail = $request->file('thumbnail');
+			$filename = time() . '.' . $thumbnail->getClientOriginalExtension();
+			$path = $thumbnail->storeAs('public/images', $filename);
+
+			$relativePath = str_replace('public/', '', $path);
+
+			$quote->thumbnail = $relativePath;
+			$quote->save();
+		}
 		$quote->save();
+
+		return response()->json(['quote' => $quote], 200);
 	}
 
 	public function destroy($id)

@@ -4,20 +4,37 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMovieRequest;
 use App\Models\Movie;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$movie = Movie::orderBy('created_at', 'desc')->get();
+		$user = auth()->user();
 
-		$query = Movie::query();
+		if (!$user instanceof User) {
+			return response()->json(['error' => 'User not found'], 404);
+		}
+
+		$query = $user->movies()
+			->with('quotes', 'genres', 'user')
+			->orderBy('created_at', 'desc');
+
 		if (request('search')) {
 			$query->where('title', 'LIKE', '%' . request('search') . '%');
 		}
-		$movie = $query->get();
-		return response()->json(['movie' => $movie], 200);
+
+		$movies = $query->get();
+
+		return response()->json(['movies' => $movies], 200);
+	}
+
+	public function searchMovies(Request $request, $query)
+	{
+		$movies = Movie::where('title', 'LIKE', '%' . $query . '%')->get();
+		return response()->json($movies);
 	}
 
 	public function show(Movie $movie): JsonResponse

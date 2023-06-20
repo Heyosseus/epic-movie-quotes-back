@@ -12,6 +12,7 @@ return new class extends Migration {
 	{
 		Schema::create('movies', function (Blueprint $table) {
 			$table->id();
+			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
 			$table->json('title')->nullable();
 			$table->integer('release_date')->nullable();
 			$table->json('description')->nullable();

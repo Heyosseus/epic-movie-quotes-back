@@ -12,12 +12,12 @@
      margin-top: 8px; text-align: left">Hola </h1>
 
     <h1 style="color: #fff; font-size:16px;
-     margin-top: 14px; text-align: left">Thanks for joining Movie quotes! We really appreciate it. Please click the button below to verify your account:</h1>
+     margin-top: 14px; text-align: left">You just successfully update your email. Please, click the button below to verify your new email:</h1>
     <button style="padding: 8px 12px; background-color: #E31221; border-radius: 4px;
-     color: #fff; border: none; outline: none; margin-right: auto; margin-top: 22px;"><a href="{{env('FRONTEND_URL') . '/thank-you'}}" style="text-decoration: none; color: white"> Verify account</a></button>
+     color: #fff; border: none; outline: none; margin-right: auto; margin-top: 22px;"><a href="{{env('FRONTEND_URL') . '/success-email'}}" style="text-decoration: none; color: white"> Verify email</a></button>
     <h1 style="color: #fff; font-size:16px;  margin-bottom: 20px;
      margin-top: 14px; text-align: left">If clicking doesn't work, you can try copying and pasting it to your browser:</h1>
-    <p style="color: #DDCCAA; text-align: left">https://movie-quotes.com/activate/</p>
+    <p style="color: #DDCCAA; text-align: left">https://movie-quotes.com/verify/</p>
     <h1 style="color: #fff; font-size:16px; font-weight: bold; margin-bottom: 20px;
      margin-top: 14px; text-align: left">If you have any problems, please contact us: support@moviequotes.ge.</h1>
     <h1 style="color: #fff; font-size:16px; font-weight: bold; margin-bottom: 20px; margin-top: 14px; text-align: left">MovieQuotes Crew</h1>

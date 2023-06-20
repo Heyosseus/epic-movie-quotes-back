@@ -10,12 +10,10 @@ return new class extends Migration {
 	 */
 	public function up(): void
 	{
-		Schema::create('quotes', function (Blueprint $table) {
+		Schema::create('likes', function (Blueprint $table) {
 			$table->id();
-			$table->json('body')->nullable();
-			$table->string('thumbnail')->nullable();
-			$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-			$table->foreignId('movie_id')->constrained('movies')->cascadeOnDelete();
+			$table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+			$table->foreignId('quote_id')->constrained('quotes')->onDelete('cascade');
 			$table->timestamps();
 		});
 	}
@@ -25,6 +23,6 @@ return new class extends Migration {
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('quotes');
+		Schema::dropIfExists('likes');
 	}
 };
