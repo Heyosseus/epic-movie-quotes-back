@@ -67,6 +67,7 @@ Route::controller(\App\Http\Controllers\CommentsController::class)->group(functi
 Route::controller(\App\Http\Controllers\LikesController::class)->group(function () {
 	Route::get('/likes/{quoteId}', [App\Http\Controllers\LikesController::class, 'index']);
 	Route::post('/add-likes', [App\Http\Controllers\LikesController::class, 'store']);
+	Route::delete('/remove-likes', [App\Http\Controllers\LikesController::class, 'destroy']);
 });
 
 //profile
