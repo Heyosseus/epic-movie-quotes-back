@@ -4,31 +4,37 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
+use App\Models\User;
 
 class NewEmailMail extends Mailable
 {
 	use Queueable, SerializesModels;
 
+	public $user;
+
 	/**
 	 * Create a new message instance.
+	 *
+	 * @param User $user
 	 */
-	public $token;
-
-	public function __construct($token)
+	public function __construct(User $user)
 	{
-		$this->token = $token;
+		$this->user = $user;
 	}
 
 	/**
-	 * Get the message content definition.
+	 * Build the message.
+	 *
+	 * @return $this
 	 */
-	public function build(): Mailable
+	public function build()
 	{
-		//		$token = route('email_verification_reset_password', ['token' => $this->token]);
-		return $this->view('emails.new-email', ['token' => $this->token])
-			->subject('Please verify your email address')
-			->with(['token' => $this->token]);
+		return $this->view('emails.new-email')
+			->subject('Please verify your updated email address')
+			->with([
+				'user'  => $this->user,
+				'token' => $this->user->token, // Assuming the token is a property of the User model
+			]);
 	}
 }
