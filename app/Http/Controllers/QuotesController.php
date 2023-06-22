@@ -56,6 +56,7 @@ class QuotesController extends Controller
 
 	public function show(Quotes $quote)
 	{
+		$quote->load('movie', 'user', 'comments', 'likes', 'comments.user');
 		return response()->json(['quote' => $quote], 200);
 	}
 
