@@ -82,4 +82,4 @@ Route::post('/add-genres', [App\Http\Controllers\GenresController::class, 'addGe
 Route::get('/check-session', [App\Http\Controllers\SessionController::class, 'checkSession']);
 
 // notifications
-Route::post('/notifications', [App\Http\Controllers\NotificationController::class, 'notify'])->middleware('auth:sanctum');
+Route::post('/notifications/{user}', [App\Http\Controllers\NotificationController::class, 'notify'])->middleware('auth:sanctum');

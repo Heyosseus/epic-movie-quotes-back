@@ -16,8 +16,9 @@ class NotificationMessages
 	/**
 	 * Authenticate the user's access to the channel.
 	 */
-	public function join(User $user, $userId): bool
+	public function join(User $user, int $id)
 	{
-		return $user->id === (int)$userId;
+		//		return ['id' => $user->id, 'name' => $user->name];
+		return (int) $user->id === $id;
 	}
 }
