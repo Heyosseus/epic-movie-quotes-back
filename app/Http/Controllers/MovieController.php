@@ -31,6 +31,12 @@ class MovieController extends Controller
 		return response()->json(['movies' => $movies], 200);
 	}
 
+	public function allMovies(): JsonResponse
+	{
+		$movies = Movie::all();
+		return response()->json(['movies' => $movies], 200);
+	}
+
 	public function searchMovies(Request $request, $query)
 	{
 		$movies = Movie::where('title', 'LIKE', '%' . $query . '%')->get();
