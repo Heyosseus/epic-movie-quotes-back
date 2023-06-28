@@ -18,4 +18,9 @@ class Notification extends Model
 	{
 		return $this->belongsTo(User::class, 'user_id');
 	}
+
+	public function quotes(): BelongsTo
+	{
+		return $this->belongsTo(Quotes::class, 'quote_id');
+	}
 }

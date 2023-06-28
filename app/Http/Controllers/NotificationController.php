@@ -6,17 +6,22 @@ use App\Events\NotificationReceived;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-	public function notify(User $user, $type): JsonResponse
+	public function notify(User $user, $type, Request $request): JsonResponse
 	{
-		$notification = (object)[
-			'to'      => $user->id,
-			'from'    => auth('sanctum')->user()->name,
-			'comment' => $type === 'comment' ? 'commented on your quote' : null,
-			'like'    => $type === 'like' ? 'liked your quote' : null,
+		$quoteId = $request->input('quote_id');
+
+		$notification = (object) [
+			'to'       => $user->id,
+			'from'     => auth('sanctum')->user()->name,
+			'quote_id' => 1,
+			'comment'  => $type === 'comment' ? 'commented on your quote' : null,
+			'like'     => $type === 'like' ? 'liked your quote' : null,
 		];
+
 		event(new NotificationReceived($notification));
 		$this->saveNotification($notification);
 
@@ -29,6 +34,7 @@ class NotificationController extends Controller
 			'to'       => $notification->to,
 			'from'     => $notification->from,
 			'user_id'  => auth('sanctum')->user()->id,
+			'quote_id' => $notification->quote_id,
 			'like'     => $notification->like,
 			'comment'  => $notification->comment,
 		]);
@@ -37,7 +43,8 @@ class NotificationController extends Controller
 	public function index(): JsonResponse
 	{
 		$user = auth('sanctum')->user();
-		$notifications = Notification::where('to', $user->id)
+		$notifications = Notification::with('quotes', 'user')
+			->where('to', $user->id)
 			->where('from', '!=', $user->name)
 			->orderBy('created_at', 'desc')
 			->get();
