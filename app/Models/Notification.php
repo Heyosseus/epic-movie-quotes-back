@@ -10,9 +10,8 @@ class Notification extends Model
 {
 	use HasFactory;
 
-	protected $fillable = [
-		'user_id',
-		'read_at',
+	protected $guarded = [
+		'id',
 	];
 
 	public function user(): BelongsTo

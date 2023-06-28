@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,7 @@ Route::controller(\App\Http\Controllers\GoogleAuthController::class)->group(func
 // movie routes
 Route::controller(\App\Http\Controllers\MovieController::class)->group(function () {
 	Route::get('/movies', [App\Http\Controllers\MovieController::class, 'index']);
+	Route::get('/all-movies', [App\Http\Controllers\MovieController::class, 'allMovies']);
 	Route::get('/search-movies/{query}', [App\Http\Controllers\MovieController::class, 'searchMovies']);
 	Route::post('/add-movies', [App\Http\Controllers\MovieController::class, 'store']);
 	Route::post('/update-movies/{movie}', [App\Http\Controllers\MovieController::class, 'update']);
@@ -82,4 +84,7 @@ Route::post('/add-genres', [App\Http\Controllers\GenresController::class, 'addGe
 Route::get('/check-session', [App\Http\Controllers\SessionController::class, 'checkSession']);
 
 // notifications
-Route::post('/notifications/{user}', [App\Http\Controllers\NotificationController::class, 'notify'])->middleware('auth:sanctum');
+Route::post('/notifications/{user}/{type}', [App\Http\Controllers\NotificationController::class, 'notify'])->middleware('auth:sanctum');
+Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->middleware('auth:sanctum');
+Route::get('/user/{userId}/notifications', [NotificationController::class, 'getFilteredNotifications']);
+Route::put('/notifications/{notification}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->middleware('auth:sanctum');
