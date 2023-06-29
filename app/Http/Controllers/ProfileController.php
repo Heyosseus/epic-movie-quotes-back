@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
-use App\Mail\AccountActivationMail;
+use App\Mail\NewEmailMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
@@ -14,9 +14,18 @@ class ProfileController extends Controller
 		$attr = $request->validated();
 
 		$user = auth()->user();
+
+		$oldEmail = $user->email;
+
 		$user->update($attr);
 
+		if ($user->email !== $oldEmail) {
+			Mail::to($user->email)->send(new NewEmailMail($user));
+			$user->email_verified_at = now();
+		}
+
 		if ($request->hasFile('profile_picture')) {
+			// Handle profile picture upload
 			$profile_picture = $request->file('profile_picture');
 			$filename = time() . '.' . $profile_picture->getClientOriginalExtension();
 			$path = $profile_picture->storeAs('public/images', $filename);
@@ -26,7 +35,7 @@ class ProfileController extends Controller
 			$user->profile_picture = $relativePath;
 			$user->save();
 		}
-		//		Mail::to($old_user->email)->send(new AccountActivationMail($old_user));
+
 		return response()->json(['user' => $user], 200);
 	}
 }

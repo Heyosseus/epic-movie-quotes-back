@@ -32,4 +32,9 @@ class Quotes extends Model
 	{
 		return $this->hasMany(Likes::class, 'quote_id', 'id');
 	}
+
+	public function notifications(): HasMany
+	{
+		return $this->hasMany(Notification::class, 'quote_id', 'id');
+	}
 }

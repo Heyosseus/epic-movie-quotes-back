@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LikeNotification;
 use App\Http\Requests\AddLikesRequest;
 use App\Models\Likes;
 use Illuminate\Http\JsonResponse;
@@ -18,8 +19,10 @@ class LikesController extends Controller
 
 		if ($existingLike) {
 			if ($existingLike->delete()) {
+				event(new LikeNotification($existingLike, false));
+
 				return response()->json([
-					'message'    => 'Like removed successfully',
+					'message'    => 'Unlike successful',
 				]);
 			} else {
 				return response()->json([
@@ -27,15 +30,15 @@ class LikesController extends Controller
 				], 500);
 			}
 		} else {
-			$likes = Likes::create($attributes);
-
-			if ($likes->save()) {
+			$like = Likes::create($attributes);
+			event(new LikeNotification($like));
+			if ($like->save()) {
 				return response()->json([
-					'message'    => 'Like added successfully',
+					'message'    => 'Like successful',
 				]);
 			} else {
 				return response()->json([
-					'message' => 'Like could not be added',
+					'message' => 'Failed to add like',
 				], 500);
 			}
 		}

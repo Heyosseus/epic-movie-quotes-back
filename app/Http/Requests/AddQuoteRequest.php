@@ -26,6 +26,7 @@ class AddQuoteRequest extends FormRequest
 			'body_ka'   => 'required',
 			'thumbnail' => 'required',
 			'movie_id'  => 'required',
+			'user_id'   => 'required',
 		];
 	}
 

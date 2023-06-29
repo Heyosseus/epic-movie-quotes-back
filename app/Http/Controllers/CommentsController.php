@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentNotification;
 use App\Http\Requests\AddCommentRequest;
 use App\Models\Comments;
 use Illuminate\Http\JsonResponse;
@@ -28,6 +29,7 @@ class CommentsController extends Controller
 			'content'  => $request->input('content'),
 		]);
 		if ($comment->save()) {
+			event(new CommentNotification($comment));
 			return response()->json([
 				'message' => 'Comment added successfully',
 				'comment' => $comment,

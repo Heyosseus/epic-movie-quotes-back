@@ -75,4 +75,9 @@ class User extends Authenticatable
 	{
 		return $this->hasMany(Comments::class, 'user_id');
 	}
+
+	public function notifications(): HasMany
+	{
+		return $this->hasMany(Notification::class, 'user_id');
+	}
 }

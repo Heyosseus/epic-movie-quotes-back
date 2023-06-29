@@ -17,7 +17,7 @@
                  ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
                    cd apps
                    cd rati-rukhadze-epic-movie-quotes-back
-                   git pull git@github.com/RedberryInternship/rati-rukhadze-epic-movie-quotes-back
+                   git pull origin main
                    php artisan optimize:clear
                    php artisan config:clear
                    php artisan cache:clear
