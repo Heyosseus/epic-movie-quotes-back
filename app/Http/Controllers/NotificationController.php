@@ -17,7 +17,7 @@ class NotificationController extends Controller
 		$notification = (object) [
 			'to'       => $user->id,
 			'from'     => auth('sanctum')->user()->name,
-			'quote_id' => 1,
+			'quote_id' => $quoteId,
 			'comment'  => $type === 'comment' ? 'commented on your quote' : null,
 			'like'     => $type === 'like' ? 'liked your quote' : null,
 		];
@@ -43,7 +43,7 @@ class NotificationController extends Controller
 	public function index(): JsonResponse
 	{
 		$user = auth('sanctum')->user();
-		$notifications = Notification::with('quotes', 'user')
+		$notifications = Notification::with('quotes', 'user', 'quotes.movie')
 			->where('to', $user->id)
 			->where('from', '!=', $user->name)
 			->orderBy('created_at', 'desc')
