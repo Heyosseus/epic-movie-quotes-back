@@ -25,7 +25,6 @@ class ProfileController extends Controller
 		}
 
 		if ($request->hasFile('profile_picture')) {
-			// Handle profile picture upload
 			$profile_picture = $request->file('profile_picture');
 			$filename = time() . '.' . $profile_picture->getClientOriginalExtension();
 			$path = $profile_picture->storeAs('public/images', $filename);

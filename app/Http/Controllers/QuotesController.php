@@ -17,9 +17,9 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function searchQuotes(Request $request, $query)
+	public function searchQuotes(Request $request, $query): JsonResponse
 	{
-		$quotes = Quotes::where('body', 'LIKE', '%' . $query . '%')->get();
+		$quotes = Quotes::where('body->en', 'LIKE', '%' . $query . '%')->get();
 		return response()->json($quotes);
 	}
 
