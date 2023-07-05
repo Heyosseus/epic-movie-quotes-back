@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMovieRequest;
+use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-	public function index(): JsonResponse
+	public function index(): JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
 		$user = auth()->user();
 
@@ -27,8 +28,7 @@ class MovieController extends Controller
 		}
 
 		$movies = $query->get();
-
-		return response()->json(['movies' => $movies], 200);
+		return  MovieResource::collection($movies);
 	}
 
 	public function allMovies(): JsonResponse
@@ -37,19 +37,19 @@ class MovieController extends Controller
 		return response()->json(['movies' => $movies], 200);
 	}
 
-	public function searchMovies(Request $request, $query)
+	public function searchMovies(Request $request, $query): JsonResponse
 	{
-		$movies = Movie::where('title', 'LIKE', '%' . $query . '%')->get();
+		$movies = Movie::where('title->en', 'LIKE', '%' . $query . '%')->orWhere('title->ka', 'LIKE', '%' . $query . '%')->with('quotes')->get();
 		return response()->json($movies);
 	}
 
-	public function show(Movie $movie): JsonResponse
+	public function show(Movie $movie): MovieResource
 	{
 		$movie->load('quotes', 'genres', 'user');
-		return response()->json(['movie' => $movie], 200);
+		return new MovieResource($movie);
 	}
 
-	public function store(AddMovieRequest $request): JsonResponse
+	public function store(AddMovieRequest $request)
 	{
 		$attr = $request->all();
 
@@ -68,10 +68,10 @@ class MovieController extends Controller
 			$movie->poster = $relativePath;
 			$movie->save();
 		}
-		return response()->json(['movie' => $movie], 200);
+		return new MovieResource($movie);
 	}
 
-	public function update(AddMovieRequest $request, Movie $movie): JsonResponse
+	public function update(AddMovieRequest $request, Movie $movie)
 	{
 		$attr = $request->validated();
 
@@ -87,7 +87,7 @@ class MovieController extends Controller
 			$movie->save();
 		}
 
-		return response()->json(['movie' => $movie], 200);
+		return new MovieResource($movie);
 	}
 
 	public function destroy($id): JsonResponse

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\NotificationReceived;
 use App\Models\Notification;
+use App\Models\Quotes;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,49 +14,28 @@ class NotificationController extends Controller
 	public function notify(User $user, $type, Request $request): JsonResponse
 	{
 		$quoteId = $request->input('quote_id');
+		$quote = Quotes::find($quoteId);
 
-		$notification = (object) [
-			'to'       => $user->id,
-			'from'     => auth('sanctum')->user()->name,
-			'quote_id' => $quoteId,
-			'comment'  => $type === 'comment' ? 'commented on your quote' : null,
-			'like'     => $type === 'like' ? 'liked your quote' : null,
+		$notificationData = [
+			'notifiable_type' => get_class($user),
+			'notifiable_id'   => $user->id,
+			'from'            => auth('sanctum')->user()->name,
+			'to'              => $user->name,
+			'comment'         => $type === 'comment' ? 'commented on your quote' : null,
 		];
 
+		$notification = $quote->notifications()->create($notificationData);
+
 		event(new NotificationReceived($notification));
-		$this->saveNotification($notification);
-
-		return response()->json(['message' => 'success'], 200);
-	}
-
-	private function saveNotification($notification): void
-	{
-		Notification::create([
-			'to'       => $notification->to,
-			'from'     => $notification->from,
-			'user_id'  => auth('sanctum')->user()->id,
-			'quote_id' => $notification->quote_id,
-			'like'     => $notification->like,
-			'comment'  => $notification->comment,
-		]);
+		return response()->json(['message' => 'success', $notification], 200);
 	}
 
 	public function index(): JsonResponse
 	{
-		$user = auth('sanctum')->user();
-		$notifications = Notification::with('quotes', 'user', 'quotes.movie')
-			->where('to', $user->id)
-			->where('from', '!=', $user->name)
-			->orderBy('created_at', 'desc')
-			->get();
-
-		return response()->json($notifications);
-	}
-
-	public function getFilteredNotifications($userId): JsonResponse
-	{
-		$notifications = Notification::where('user_id', $userId)
+		$notifications = Notification::where('notifiable_type', Quotes::class)
 			->where('from', '!=', auth()->user()->name)
+			->with('notifiable')
+			->orderBy('created_at', 'desc')
 			->get();
 
 		return response()->json($notifications);
@@ -66,5 +46,11 @@ class NotificationController extends Controller
 		$notification->update(['read' => true]);
 
 		return response()->json(['message' => 'Notification marked as read'], 200);
+	}
+
+	public function markAllAsRead(): JsonResponse
+	{
+		Notification::query()->update(['read' => true]);
+		return response()->json(['message' => 'Notifications marked as read'], 200);
 	}
 }

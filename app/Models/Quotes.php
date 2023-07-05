@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Quotes extends Model
 {
@@ -23,18 +24,25 @@ class Quotes extends Model
 		return $this->belongsTo(User::class, 'user_id', 'id');
 	}
 
+	public function likes()
+	{
+		return $this->belongsToMany(User::class, 'quote_user', 'quote_id', 'user_id')
+			->withPivot('likes')
+			->withTimestamps();
+	}
+
 	public function comments(): HasMany
 	{
 		return $this->hasMany(Comments::class, 'quote_id', 'id');
 	}
 
-	public function likes(): HasMany
-	{
-		return $this->hasMany(Likes::class, 'quote_id', 'id');
-	}
+//	public function notifications(): HasMany
+//	{
+//		return $this->hasMany(Notification::class, 'quote_id', 'id');
+//	}
 
-	public function notifications(): HasMany
+	public function notifications(): MorphMany
 	{
-		return $this->hasMany(Notification::class, 'quote_id', 'id');
+		return $this->morphMany(Notification::class, 'notifiable');
 	}
 }

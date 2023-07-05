@@ -4,29 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
+use App\Http\Resources\QuoteResource;
 use App\Models\Quotes;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class QuotesController extends Controller
 {
-	public function index($movieId): JsonResponse
+	public function index($movieId)
 	{
 		$quote = Quotes::with('comments', 'likes')->where('movie_id', $movieId)->orderBy('created_at', 'desc')->get();
 
-		return response()->json(['quote' => $quote], 200);
+		//		return response()->json(['quote' => $quote], 200);
+		return new QuoteResource($quote);
 	}
 
-	public function searchQuotes(Request $request, $query): JsonResponse
+	public function searchQuotes(Request $request, $query)
 	{
-		$quotes = Quotes::where('body->en', 'LIKE', '%' . $query . '%')->get();
+		$quotes = Quotes::where('body->en', 'LIKE', '%' . $query . '%')->orWhere('body->ka', 'LIKE', '%' . $query . '%')->get();
 		return response()->json($quotes);
 	}
 
 	public function newsFeed(): JsonResponse
 	{
 		$quotes = Quotes::with('movie', 'user', 'comments', 'likes', 'comments.user')
-		->orderBy('created_at', 'desc')
+			->orderBy('created_at', 'desc')
 			->take(10)
 			->get();
 

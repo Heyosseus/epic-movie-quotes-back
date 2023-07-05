@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Notification extends Model
 {
@@ -14,13 +14,8 @@ class Notification extends Model
 		'id',
 	];
 
-	public function user(): BelongsTo
+	public function notifiable(): MorphTo
 	{
-		return $this->belongsTo(User::class, 'user_id');
-	}
-
-	public function quotes(): BelongsTo
-	{
-		return $this->belongsTo(Quotes::class, 'quote_id');
+		return $this->morphTo();
 	}
 }

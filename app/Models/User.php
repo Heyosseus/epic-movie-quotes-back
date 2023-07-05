@@ -7,9 +7,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use League\CommonMark\Extension\SmartPunct\Quote;
 
 class User extends Authenticatable
 {
@@ -66,6 +68,13 @@ class User extends Authenticatable
 		return $this->hasMany(Movie::class);
 	}
 
+	public function likes()
+	{
+		return $this->belongsToMany(Quote::class, 'quote_user', 'user_id', 'quote_id')
+			->withPivot('likes')
+			->withTimestamps();
+	}
+
 	public function quotes(): HasMany
 	{
 		return $this->hasMany(Quotes::class, 'user_id');
@@ -76,8 +85,8 @@ class User extends Authenticatable
 		return $this->hasMany(Comments::class, 'user_id');
 	}
 
-	public function notifications(): HasMany
+	public function notifications(): MorphMany
 	{
-		return $this->hasMany(Notification::class, 'user_id');
+		return $this->morphMany(Notification::class, 'notifiable');
 	}
 }
