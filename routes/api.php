@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LikesController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -68,7 +69,7 @@ Route::controller(\App\Http\Controllers\CommentsController::class)->group(functi
 //likes
 Route::controller(\App\Http\Controllers\LikesController::class)->group(function () {
 	Route::get('/likes/{quoteId}', [App\Http\Controllers\LikesController::class, 'index']);
-	Route::post('/add-likes', [App\Http\Controllers\LikesController::class, 'store']);
+	Route::post('/quotes/{quote}/like/{user}', [LikesController::class, 'store'])->middleware('auth:sanctum');
 	Route::delete('/remove-likes', [App\Http\Controllers\LikesController::class, 'destroy']);
 });
 
@@ -88,3 +89,4 @@ Route::post('/notifications/{user}/{type}', [App\Http\Controllers\NotificationCo
 Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->middleware('auth:sanctum');
 Route::get('/user/{userId}/notifications', [NotificationController::class, 'getFilteredNotifications']);
 Route::put('/notifications/{notification}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->middleware('auth:sanctum');
+Route::put('/notifications/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->middleware('auth:sanctum');

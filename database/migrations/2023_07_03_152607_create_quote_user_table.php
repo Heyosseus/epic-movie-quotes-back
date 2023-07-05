@@ -10,13 +10,11 @@ return new class extends Migration {
 	 */
 	public function up(): void
 	{
-		Schema::create('notifications', function (Blueprint $table) {
+		Schema::create('quote_user', function (Blueprint $table) {
 			$table->id();
-			$table->string('to');
-			$table->string('from');
-			$table->boolean('read')->default(false);
-			$table->unsignedBigInteger('notifiable_id');
-			$table->string('notifiable_type');
+			$table->boolean('likes')->default(false);
+			$table->string('user_id')->references('id')->on('users')->onDelete('cascade');
+			$table->string('quote_id')->references('id')->on('quotes')->onDelete('cascade');
 			$table->timestamps();
 		});
 	}
@@ -26,6 +24,6 @@ return new class extends Migration {
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('notifications');
+		Schema::dropIfExists('quote_user');
 	}
 };
