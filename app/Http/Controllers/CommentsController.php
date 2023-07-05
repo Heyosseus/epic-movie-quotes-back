@@ -24,9 +24,7 @@ class CommentsController extends Controller
 		$attributes = $request->validated();
 
 		$comment = Comments::create([
-			'quote_id' => $request->quote_id,
-			'user_id'  => $request->user()->id,
-			'content'  => $request->input('content'),
+			$attributes,
 		]);
 		if ($comment->save()) {
 			event(new CommentNotification($comment));

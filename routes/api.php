@@ -89,4 +89,4 @@ Route::post('/notifications/{user}/{type}', [App\Http\Controllers\NotificationCo
 Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->middleware('auth:sanctum');
 Route::get('/user/{userId}/notifications', [NotificationController::class, 'getFilteredNotifications']);
 Route::put('/notifications/{notification}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->middleware('auth:sanctum');
-Route::put('/notifications/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->middleware('auth:sanctum');
+Route::put('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->middleware('auth:sanctum');
