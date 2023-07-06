@@ -14,9 +14,8 @@ class QuotesController extends Controller
 	public function index($movieId)
 	{
 		$quote = Quotes::with('comments', 'likes')->where('movie_id', $movieId)->orderBy('created_at', 'desc')->get();
-
-		//		return response()->json(['quote' => $quote], 200);
-		return new QuoteResource($quote);
+		$quote->load('movie', 'user', 'comments', 'likes', 'comments.user');
+		return QuoteResource::collection($quote);
 	}
 
 	public function searchQuotes(Request $request, $query)

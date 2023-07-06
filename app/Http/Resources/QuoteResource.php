@@ -20,6 +20,8 @@ class QuoteResource extends JsonResource
 			'thumbnail' => $this->thumbnail,
 			'movie'     => new MovieResource($this->whenLoaded('movie')),
 			'user'      => new UserResource($this->whenLoaded('user')),
+			'comments'  => CommentResource::collection($this->whenLoaded('comments')),
+			'likes'     => LikeResource::collection($this->whenLoaded('likes')),
 		];
 	}
 }
