@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-	public function index(): JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
+	public function index(Request $request): JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
 		$user = auth()->user();
 
@@ -24,28 +24,29 @@ class MovieController extends Controller
 			->orderBy('created_at', 'desc');
 
 		if (request('search')) {
-			$query->where('title', 'LIKE', '%' . request('search') . '%');
+			$searchQuery = request('search');
+			$query->where(function ($q) use ($searchQuery) {
+				$q->where('title->en', 'LIKE', '%' . $searchQuery . '%')
+					->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%');
+			});
 		}
 
 		$movies = $query->get();
-		return  MovieResource::collection($movies);
-	}
 
-	public function allMovies(): JsonResponse
-	{
-		$movies = Movie::all();
-		return response()->json(['movies' => $movies], 200);
-	}
+		if (request('search') && $movies->isEmpty()) {
+			$searchQuery = request('search');
+			$movies = Movie::where('title->en', 'LIKE', '%' . $searchQuery . '%')
+				->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%')
+				->with('quotes')
+				->get();
+		}
 
-	public function searchMovies(Request $request, $query): JsonResponse
-	{
-		$movies = Movie::where('title->en', 'LIKE', '%' . $query . '%')->orWhere('title->ka', 'LIKE', '%' . $query . '%')->with('quotes')->get();
-		return response()->json($movies);
+		return MovieResource::collection($movies);
 	}
 
 	public function show(Movie $movie): MovieResource
 	{
-		$movie->load('quotes', 'genres', 'user');
+		$movie->load('quotes', 'genres', 'user', 'quotes.comments', 'quotes.likes');
 		return new MovieResource($movie);
 	}
 

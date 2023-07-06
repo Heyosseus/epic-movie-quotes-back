@@ -23,9 +23,8 @@ class CommentsController extends Controller
 	{
 		$attributes = $request->validated();
 
-		$comment = Comments::create([
-			$attributes,
-		]);
+		$comment = Comments::create($attributes)->load('user');
+
 		if ($comment->save()) {
 			event(new CommentNotification($comment));
 			return response()->json([

@@ -6,15 +6,14 @@ use App\Events\LikeNotification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use App\Models\Quotes;
-use Illuminate\Http\Request;
 
 class LikesController extends Controller
 {
-	public function store(Quotes $quote, User $user, Request $request): JsonResponse
+	public function store(Quotes $quote, User $user): JsonResponse
 	{
 		$existingLike = $quote->likes()->where('user_id', $user->id)->first();
 
-		if (!$existingLike) {
+		if ($existingLike) {
 			if ($existingLike->user_id !== $user->id) {
 				$quote->likes()->detach($user);
 

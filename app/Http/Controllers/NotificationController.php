@@ -21,7 +21,6 @@ class NotificationController extends Controller
 			'notifiable_id'   => $user->id,
 			'from'            => auth('sanctum')->user()->name,
 			'to'              => $user->name,
-			'comment'         => $type === 'comment' ? 'commented on your quote' : null,
 		];
 
 		$notification = $quote->notifications()->create($notificationData);

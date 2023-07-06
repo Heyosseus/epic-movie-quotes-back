@@ -5,35 +5,29 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
 use App\Http\Resources\QuoteResource;
+use App\Models\Movie;
 use App\Models\Quotes;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class QuotesController extends Controller
 {
-	public function index($movieId)
+	public function index(Request $request, Movie $movie)
 	{
-		$quote = Quotes::with('comments', 'likes')->where('movie_id', $movieId)->orderBy('created_at', 'desc')->get();
-		$quote->load('movie', 'user', 'comments', 'likes', 'comments.user');
-		return QuoteResource::collection($quote);
-	}
+		//		$quote->load('movie', 'user', 'comments', 'likes', 'comments.user');
 
-	public function searchQuotes(Request $request, $query)
-	{
-		$quotes = Quotes::where('body->en', 'LIKE', '%' . $query . '%')->orWhere('body->ka', 'LIKE', '%' . $query . '%')->get();
-		return response()->json($quotes);
-	}
-
-	public function newsFeed(): JsonResponse
-	{
-		$quotes = Quotes::with('movie', 'user', 'comments', 'comments.user', 'likes')
-			->orderBy('created_at', 'desc')
-			->take(10)
-			->get();
-
+		if ($request->has('query')) {
+			$query = $request->query('query');
+			$quotes = Quotes::where('body->en', 'LIKE', '%' . $query . '%')
+				->orWhere('body->ka', 'LIKE', '%' . $query . '%')
+				->get();
+		} else {
+			$quotes = Quotes::with('movie', 'user', 'comments', 'comments.user', 'likes')
+				->orderBy('created_at', 'desc')
+				->paginate(5);
+		}
 		$quotes->load('movie', 'user', 'comments', 'comments.user');
-
-		return response()->json(['quotes' => $quotes], 200);
+		return QuoteResource::collection($quotes);
 	}
 
 	public function store(AddQuoteRequest $request): JsonResponse

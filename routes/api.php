@@ -53,11 +53,9 @@ Route::controller(\App\Http\Controllers\MovieController::class)->group(function 
 
 // quote routes
 Route::controller(\App\Http\Controllers\QuotesController::class)->group(function () {
-	Route::get('/quotes/{movieId}', [App\Http\Controllers\QuotesController::class, 'index']);
+	Route::get('/quotes', [App\Http\Controllers\QuotesController::class, 'index']);
 	Route::get('/search-quotes/{query}', [App\Http\Controllers\QuotesController::class, 'searchQuotes']);
-	Route::get('/news-feed', [App\Http\Controllers\QuotesController::class, 'newsFeed']);
 	Route::post('/add-quotes', [App\Http\Controllers\QuotesController::class, 'store']);
-	Route::post('/update-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'update']);
 	Route::get('/show-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'show']);
 	Route::delete('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'destroy']);
 });

@@ -23,6 +23,7 @@ class AddCommentRequest extends FormRequest
 	{
 		return [
 			'quote_id' => 'required',
+			'user_id'  => 'required',
 			'content'  => 'required|string|max:255',
 		];
 	}
