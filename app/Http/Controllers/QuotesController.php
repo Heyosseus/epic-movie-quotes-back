@@ -14,6 +14,7 @@ class QuotesController extends Controller
 {
 	public function index(Request $request, Movie $movie): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
+		$this->authorize('index', Quotes::class);
 		if ($request->has('query')) {
 			$query = $request->query('query');
 			$quotes = Quotes::with('movie', 'user', 'comments', 'likes')->where('body->en', 'LIKE', '%' . $query . '%')
@@ -32,7 +33,7 @@ class QuotesController extends Controller
 	public function store(AddQuoteRequest $request): JsonResponse
 	{
 		$attr = $request->all();
-
+		$this->authorize('store', Quotes::class);
 		$quote = Quotes::create($attr);
 
 		if ($request->hasFile('thumbnail')) {
@@ -57,7 +58,7 @@ class QuotesController extends Controller
 	public function update(UpdateQuoteRequest $request, $quoteId): JsonResponse
 	{
 		$quote = Quotes::find($quoteId);
-
+		$this->authorize('update', $quote);
 		$quote->body = $request->input('body');
 
 		$quote->movie_id = $request->input('movie_id');
@@ -80,7 +81,7 @@ class QuotesController extends Controller
 	public function destroy($id): JsonResponse
 	{
 		Quotes::destroy($id);
-
+		$this->authorize('destroy', $quote);
 		return response()->json(['message' => 'Quote deleted successfully'], 200);
 	}
 }

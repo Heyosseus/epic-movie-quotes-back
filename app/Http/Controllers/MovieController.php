@@ -14,7 +14,7 @@ class MovieController extends Controller
 	public function index(Request $request): JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
 		$user = auth()->user();
-
+		$this->authorize('index', Movie::class);
 		if (!$user instanceof User) {
 			return response()->json(['error' => 'User not found'], 404);
 		}
@@ -52,6 +52,7 @@ class MovieController extends Controller
 
 	public function store(AddMovieRequest $request)
 	{
+		$this->authorize('store', Movie::class);
 		$attr = $request->all();
 
 		$movie = Movie::create($attr);
@@ -72,10 +73,10 @@ class MovieController extends Controller
 		return new MovieResource($movie);
 	}
 
-	public function update(AddMovieRequest $request, Movie $movie)
+	public function update(AddMovieRequest $request, Movie $movie): MovieResource
 	{
+		$this->authorize('update', $movie);
 		$attr = $request->validated();
-
 		$movie->update($attr);
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');
@@ -93,6 +94,7 @@ class MovieController extends Controller
 
 	public function destroy($id): JsonResponse
 	{
+		$this->authorize('delete', Movie::class);
 		Movie::destroy($id);
 		return response()->json(['message' => 'Movie deleted successfully'], 200);
 	}

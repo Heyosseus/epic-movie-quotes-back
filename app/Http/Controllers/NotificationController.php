@@ -18,16 +18,16 @@ class NotificationController extends Controller
 
 		$notificationData = [
 			'notifiable_type' => get_class($quotes),
-			'notifiable_id'   => $user->id,
+			'notifiable_id'   => auth('sanctum')->user()->id,
 			'type'            => $type,
 			'from'            => auth('sanctum')->user()->name,
 			'to'              => $user->name,
 		];
 
 		$notification = (object) [
-			'to'      => $user->id,
-			'from'    => auth('sanctum')->user()->name,
-			'type'    => $type,
+			'to'              => $user->id,
+			'from'            => auth('sanctum')->user()->name,
+			'type'            => $type,
 		];
 
 		event(new NotificationReceived($notification));
