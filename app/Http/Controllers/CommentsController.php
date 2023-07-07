@@ -25,16 +25,10 @@ class CommentsController extends Controller
 
 		$comment = Comments::create($attributes)->load('user');
 
-		if ($comment->save()) {
-			event(new CommentNotification($comment));
-			return response()->json([
-				'message' => 'Comment added successfully',
-				'comment' => $comment,
-			]);
-		} else {
-			return response()->json([
-				'message' => 'Comment could not be added',
-			], 500);
-		}
+		event(new CommentNotification($comment));
+		return response()->json([
+			'message' => 'Comment added successfully',
+			'comment' => $comment,
+		]);
 	}
 }

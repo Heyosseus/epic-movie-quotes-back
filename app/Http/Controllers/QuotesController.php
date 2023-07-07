@@ -12,19 +12,18 @@ use Illuminate\Http\Request;
 
 class QuotesController extends Controller
 {
-	public function index(Request $request, Movie $movie)
+	public function index(Request $request, Movie $movie): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
-		//		$quote->load('movie', 'user', 'comments', 'likes', 'comments.user');
-
 		if ($request->has('query')) {
 			$query = $request->query('query');
-			$quotes = Quotes::where('body->en', 'LIKE', '%' . $query . '%')
+			$quotes = Quotes::with('movie', 'user', 'comments', 'likes')->where('body->en', 'LIKE', '%' . $query . '%')
 				->orWhere('body->ka', 'LIKE', '%' . $query . '%')
 				->get();
 		} else {
+			$perPage = $request->input('per_page', 2);
 			$quotes = Quotes::with('movie', 'user', 'comments', 'comments.user', 'likes')
 				->orderBy('created_at', 'desc')
-				->paginate(5);
+				->paginate($perPage);
 		}
 		$quotes->load('movie', 'user', 'comments', 'comments.user');
 		return QuoteResource::collection($quotes);
@@ -49,13 +48,13 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function show(Quotes $quote)
+	public function show(Quotes $quote): JsonResponse
 	{
 		$quote->load('movie', 'user', 'comments', 'likes', 'comments.user');
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function update(UpdateQuoteRequest $request, $quoteId)
+	public function update(UpdateQuoteRequest $request, $quoteId): JsonResponse
 	{
 		$quote = Quotes::find($quoteId);
 
@@ -78,7 +77,7 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function destroy($id)
+	public function destroy($id): JsonResponse
 	{
 		Quotes::destroy($id);
 

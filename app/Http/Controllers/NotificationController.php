@@ -11,22 +11,34 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-	public function notify(User $user, $type, Request $request): JsonResponse
+	public function notify(User $user, $type, Quotes $quotes, Request $request): JsonResponse
 	{
 		$quoteId = $request->input('quote_id');
 		$quote = Quotes::find($quoteId);
 
 		$notificationData = [
-			'notifiable_type' => get_class($user),
+			'notifiable_type' => get_class($quotes),
 			'notifiable_id'   => $user->id,
+			'type'            => $type,
 			'from'            => auth('sanctum')->user()->name,
 			'to'              => $user->name,
 		];
 
-		$notification = $quote->notifications()->create($notificationData);
+		$notification = (object) [
+			'to'      => $user->id,
+			'from'    => auth('sanctum')->user()->name,
+			'type'    => $type,
+		];
 
 		event(new NotificationReceived($notification));
-		return response()->json(['message' => 'success', $notification], 200);
+		$this->saveNotification($notificationData);
+
+		return response()->json(['message' => 'success', 'notification' => $notification], 200);
+	}
+
+	private function saveNotification($notificationData): void
+	{
+		Notification::create($notificationData);
 	}
 
 	public function index(): JsonResponse
