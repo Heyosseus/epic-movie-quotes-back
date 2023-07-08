@@ -4,64 +4,91 @@ namespace App\Http\Controllers;
 
 use App\Events\NotificationReceived;
 use App\Models\Notification;
-use App\Models\Quotes;
+use App\Models\Quote;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-	public function notify(User $user, $type, Quotes $quotes, Request $request): JsonResponse
+	public function notify(User $user, $type, Quote $quote, Request $request): JsonResponse
 	{
-		$quoteId = $request->input('quote_id');
-		$quote = Quotes::find($quoteId);
-
 		$notificationData = [
-			'notifiable_type' => get_class($quotes),
-			'notifiable_id'   => auth('sanctum')->user()->id,
+			'notifiable_type' => Quote::class,
+			'notifiable_id'   => $quote->id,
+			'type'            => $type,
+			'from'            => auth('sanctum')->user()->name,
+			'to'              => $user->name,
+		];
+
+		$userNotificationData = [
+			'notifiable_type' => User::class,
+			'notifiable_id'   => $user->id,
 			'type'            => $type,
 			'from'            => auth('sanctum')->user()->name,
 			'to'              => $user->name,
 		];
 
 		$notification = (object) [
-			'to'              => $user->id,
-			'from'            => auth('sanctum')->user()->name,
-			'type'            => $type,
+			'to'   => $user->id,
+			'from' => auth('sanctum')->user()->name,
+			'type' => $type,
 		];
 
 		event(new NotificationReceived($notification));
-		$this->saveNotification($notificationData);
 
-		return response()->json(['message' => 'success', 'notification' => $notification], 200);
+		$this->saveNotification($notificationData);
+		$this->saveNotification($userNotificationData);
+
+		//		$notifications = Notification::with('notifiable', 'notifiable.user', 'notifiable.comments')->get();
+
+		return response()->json(['message' => 'success'], 200);
 	}
 
 	private function saveNotification($notificationData): void
 	{
-		Notification::create($notificationData);
+		$notifiableType = $notificationData['notifiable_type'];
+		$notifiableId = $notificationData['notifiable_id'];
+
+		unset($notificationData['notifiable_type'], $notificationData['notifiable_id']);
+
+		$notification = new Notification($notificationData);
+
+		try {
+			$notifiable = $notifiableType::findOrFail($notifiableId);
+			$notifiable->notifications()->save($notification);
+		} catch (\Exception $e) {
+			// Handle the error, such as logging or displaying an error message
+			// For example:
+			// Log::error($e->getMessage());
+			// return response()->json(['message' => 'Failed to save notification'], 500);
+		}
 	}
 
-	public function index(): JsonResponse
-	{
-		$notifications = Notification::where('notifiable_type', Quotes::class)
-			->where('from', '!=', auth()->user()->name)
-			->with('notifiable')
-			->orderBy('created_at', 'desc')
-			->get();
+		public function index(): JsonResponse
+		{
+			$notifications = Notification::where(function ($query) {
+				$query->where('notifiable_type', Quote::class)
+					->orWhere('notifiable_type', User::class);
+			})
+				->where('from', '!=', auth()->user()->name)
+				->with('notifiable')
+				->orderBy('created_at', 'desc')
+				->get();
 
-		return response()->json($notifications);
-	}
+			return response()->json($notifications);
+		}
 
-	public function markAsRead(Notification $notification): JsonResponse
-	{
-		$notification->update(['read' => true]);
+		public function markAsRead(Notification $notification): JsonResponse
+		{
+			$notification->update(['read' => true]);
 
-		return response()->json(['message' => 'Notification marked as read'], 200);
-	}
+			return response()->json(['message' => 'Notification marked as read'], 200);
+		}
 
-	public function markAllAsRead(): JsonResponse
-	{
-		Notification::query()->update(['read' => true]);
-		return response()->json(['message' => 'Notifications marked as read'], 200);
-	}
+		public function markAllAsRead(): JsonResponse
+		{
+			Notification::query()->update(['read' => true]);
+			return response()->json(['message' => 'Notifications marked as read'], 200);
+		}
 }

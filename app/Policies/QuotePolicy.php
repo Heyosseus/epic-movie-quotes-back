@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\quotes;
+use App\Models\Quote;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class QuotePolicy
@@ -29,7 +29,7 @@ class QuotePolicy
 	/**
 	 * Determine whether the user can update the model.
 	 */
-	public function update(User $user, quotes $quotes): bool
+	public function update(User $user, Quote $quotes): bool
 	{
 		return $user->id === $quotes->user_id;
 	}
@@ -37,7 +37,7 @@ class QuotePolicy
 	/**
 	 * Determine whether the user can delete the model.
 	 */
-	public function delete(User $user, quotes $quotes): bool
+	public function delete(User $user, Quote $quotes): bool
 	{
 		return $user->id === $quotes->user_id;
 	}

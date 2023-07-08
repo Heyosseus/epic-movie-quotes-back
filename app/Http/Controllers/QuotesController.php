@@ -6,7 +6,7 @@ use App\Http\Requests\AddQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
 use App\Http\Resources\QuoteResource;
 use App\Models\Movie;
-use App\Models\Quotes;
+use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,15 +14,15 @@ class QuotesController extends Controller
 {
 	public function index(Request $request, Movie $movie): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
-		$this->authorize('index', Quotes::class);
+		$this->authorize('index', Quote::class);
 		if ($request->has('query')) {
 			$query = $request->query('query');
-			$quotes = Quotes::with('movie', 'user', 'comments', 'likes')->where('body->en', 'LIKE', '%' . $query . '%')
+			$quotes = Quote::with('movie', 'user', 'comments', 'likes')->where('body->en', 'LIKE', '%' . $query . '%')
 				->orWhere('body->ka', 'LIKE', '%' . $query . '%')
 				->get();
 		} else {
 			$perPage = $request->input('per_page', 2);
-			$quotes = Quotes::with('movie', 'user', 'comments', 'comments.user', 'likes')
+			$quotes = Quote::with('movie', 'user', 'comments', 'comments.user', 'likes')
 				->orderBy('created_at', 'desc')
 				->paginate($perPage);
 		}
@@ -33,8 +33,8 @@ class QuotesController extends Controller
 	public function store(AddQuoteRequest $request): JsonResponse
 	{
 		$attr = $request->all();
-		$this->authorize('store', Quotes::class);
-		$quote = Quotes::create($attr);
+		$this->authorize('store', Quote::class);
+		$quote = Quote::create($attr);
 
 		if ($request->hasFile('thumbnail')) {
 			$thumbnail = $request->file('thumbnail');
@@ -49,7 +49,7 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function show(Quotes $quote): JsonResponse
+	public function show(Quote $quote): JsonResponse
 	{
 		$quote->load('movie', 'user', 'comments', 'likes', 'comments.user');
 		return response()->json(['quote' => $quote], 200);
@@ -57,7 +57,7 @@ class QuotesController extends Controller
 
 	public function update(UpdateQuoteRequest $request, $quoteId): JsonResponse
 	{
-		$quote = Quotes::find($quoteId);
+		$quote = Quote::find($quoteId);
 		$this->authorize('update', $quote);
 		$quote->body = $request->input('body');
 
@@ -80,7 +80,7 @@ class QuotesController extends Controller
 
 	public function destroy($id): JsonResponse
 	{
-		Quotes::destroy($id);
+		Quote::destroy($id);
 		$this->authorize('destroy', $quote);
 		return response()->json(['message' => 'Quote deleted successfully'], 200);
 	}

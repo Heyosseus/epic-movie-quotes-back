@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use League\CommonMark\Extension\SmartPunct\Quote;
 
 class User extends Authenticatable
 {
@@ -77,12 +76,12 @@ class User extends Authenticatable
 
 	public function quotes(): HasMany
 	{
-		return $this->hasMany(Quotes::class, 'user_id');
+		return $this->hasMany(Quote::class, 'user_id');
 	}
 
 	public function comments(): HasMany
 	{
-		return $this->hasMany(Comments::class, 'user_id');
+		return $this->hasMany(Comment::class, 'user_id');
 	}
 
 	public function notifications(): MorphMany

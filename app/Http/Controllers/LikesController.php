@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Events\LikeNotification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use App\Models\Quotes;
+use App\Models\Quote;
 
 class LikesController extends Controller
 {
-	public function store(Quotes $quote, User $user): JsonResponse
+	public function store(Quote $quote, User $user): JsonResponse
 	{
 		$existingLike = $quote->likes()->where('user_id', $user->id)->first();
 
