@@ -13,7 +13,7 @@ class QuotePolicy
 	/**
 	 * Determine whether the user can view the model.
 	 */
-	public function index(User $user, quotes $quotes): bool
+	public function index(): bool
 	{
 		return true;
 	}

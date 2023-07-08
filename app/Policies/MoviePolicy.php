@@ -13,9 +13,9 @@ class MoviePolicy
 	/**
 	 * Determine whether the user can view the model.
 	 */
-	public function index(User $user, movie $movie): bool
+	public function index(User $user): bool
 	{
-		return true;
+		return $user->id === auth()->user()->id;
 	}
 
 	/**
