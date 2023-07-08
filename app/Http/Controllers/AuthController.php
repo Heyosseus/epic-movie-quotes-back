@@ -29,7 +29,7 @@ class AuthController extends Controller
 		return response()->json(['user' => $newUser], 200);
 	}
 
-	public function login(AuthLoginRequest $request)
+	public function login(AuthLoginRequest $request): object
 	{
 		$attrs = $request->validated();
 
@@ -41,7 +41,7 @@ class AuthController extends Controller
 		}
 	}
 
-	public function logout()
+	public function logout(): object
 	{
 		try {
 			Auth::guard('web')->logout();
