@@ -20,7 +20,8 @@ As a registered user, you can explore a vast collection of movie quotes contribu
 3. Run `npm install` to install the dependencies
 4. execute this command `cp .env.example .env` to create a copy of the .env file
 5. Run `php artisan migrate` to create the database tables
-6. Run `php artisan serve` to start the server
+6. Run `php artisan queue:work` to activate queue worker
+7. Run `php artisan serve` to start the server
 
 **# DrawSQL Diagram**
 

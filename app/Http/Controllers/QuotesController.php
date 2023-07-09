@@ -81,7 +81,6 @@ class QuotesController extends Controller
 	public function destroy($id): JsonResponse
 	{
 		Quote::destroy($id);
-		$this->authorize('destroy', $quote);
 		return response()->json(['message' => 'Quote deleted successfully'], 200);
 	}
 }

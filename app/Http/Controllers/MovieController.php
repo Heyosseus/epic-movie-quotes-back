@@ -94,7 +94,6 @@ class MovieController extends Controller
 
 	public function destroy($id): JsonResponse
 	{
-		$this->authorize('delete', Movie::class);
 		Movie::destroy($id);
 		return response()->json(['message' => 'Movie deleted successfully'], 200);
 	}

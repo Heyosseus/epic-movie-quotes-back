@@ -29,7 +29,7 @@ class MoviePolicy
 	/**
 	 * Determine whether the user can update the model.
 	 */
-	public function update(User $user, movie $movie): bool
+	public function update(User $user, Movie $movie): bool
 	{
 		return $user->id === $movie->user_id;
 	}
@@ -37,7 +37,7 @@ class MoviePolicy
 	/**
 	 * Determine whether the user can delete the model.
 	 */
-	public function delete(User $user, movie $movie): bool
+	public function delete(User $user, Movie $movie): bool
 	{
 		return $user->id === $movie->user_id;
 	}

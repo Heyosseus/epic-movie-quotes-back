@@ -58,26 +58,25 @@ class NotificationController extends Controller
 			$notifiable = $notifiableType::findOrFail($notifiableId);
 			$notifiable->notifications()->save($notification);
 		} catch (\Exception $e) {
-			// Handle the error, such as logging or displaying an error message
-			// For example:
-			// Log::error($e->getMessage());
-			// return response()->json(['message' => 'Failed to save notification'], 500);
 		}
 	}
 
-		public function index(): JsonResponse
-		{
-			$notifications = Notification::where(function ($query) {
-				$query->where('notifiable_type', Quote::class)
-					->orWhere('notifiable_type', User::class);
-			})
-				->where('from', '!=', auth()->user()->name)
-				->with('notifiable')
-				->orderBy('created_at', 'desc')
-				->get();
+	public function index(): JsonResponse
+	{
+		$notifications = Notification::where(function ($query) {
+			$query->where('notifiable_type', Quote::class)
+				->orWhere('notifiable_type', User::class);
+		})
+			->where('from', '!=', auth()->user()->name)
+			->with('notifiable', 'notifiable.comments', 'notifiable.comments.user')
+			->orderBy('created_at', 'desc')
+			->get();
 
-			return response()->json($notifications);
-		}
+		$notifications->each(function ($notification) {
+			$notification->sender = $notification->notifiable->user;
+		});
+		return response()->json($notifications);
+	}
 
 		public function markAsRead(Notification $notification): JsonResponse
 		{

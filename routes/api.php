@@ -58,7 +58,7 @@ Route::controller(\App\Http\Controllers\QuotesController::class)->group(function
 	Route::post('/add-quotes', [App\Http\Controllers\QuotesController::class, 'store']);
 	Route::post('/update-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'update']);
 	Route::get('/show-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'show']);
-	//	Route::delete('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'destroy']);
+	Route::delete('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'destroy']);
 });
 //comments
 Route::controller(\App\Http\Controllers\CommentsController::class)->group(function () {
