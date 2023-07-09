@@ -4,77 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Events\NotificationReceived;
 use App\Models\Notification;
-use App\Models\Quote;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-	public function notify(User $user, $type, Quote $quote, Request $request): JsonResponse
+	public function notify(User $user, $type, Request $request): JsonResponse
 	{
-		$notificationData = [
-			'notifiable_type' => Quote::class,
-			'notifiable_id'   => $quote->id,
-			'type'            => $type,
-			'from'            => auth('sanctum')->user()->name,
-			'to'              => $user->name,
-		];
-
-		$userNotificationData = [
-			'notifiable_type' => User::class,
-			'notifiable_id'   => $user->id,
-			'type'            => $type,
-			'from'            => auth('sanctum')->user()->name,
-			'to'              => $user->name,
-		];
+		$quoteId = $request->input('quote_id');
 
 		$notification = (object) [
-			'to'   => $user->id,
-			'from' => auth('sanctum')->user()->name,
-			'type' => $type,
+			'to'       => $user->id,
+			'from'     => auth('sanctum')->user()->name,
+			'quote_id' => $quoteId,
+			'type'     => $type,
 		];
 
 		event(new NotificationReceived($notification));
+		$this->saveNotification($notification);
+		$notification = Notification::with('quotes')->get();
 
-		$this->saveNotification($notificationData);
-		$this->saveNotification($userNotificationData);
-
-		//		$notifications = Notification::with('notifiable', 'notifiable.user', 'notifiable.comments')->get();
-
-		return response()->json(['message' => 'success'], 200);
+		return response()->json(['message' => 'success', 'notification'=> $notification], 200);
 	}
 
-	private function saveNotification($notificationData): void
+	private function saveNotification($notification): void
 	{
-		$notifiableType = $notificationData['notifiable_type'];
-		$notifiableId = $notificationData['notifiable_id'];
-
-		unset($notificationData['notifiable_type'], $notificationData['notifiable_id']);
-
-		$notification = new Notification($notificationData);
-
-		try {
-			$notifiable = $notifiableType::findOrFail($notifiableId);
-			$notifiable->notifications()->save($notification);
-		} catch (\Exception $e) {
-		}
+		Notification::create([
+			'to'       => $notification->to,
+			'from'     => $notification->from,
+			'user_id'  => auth('sanctum')->user()->id,
+			'quote_id' => $notification->quote_id,
+			'type'     => $notification->type,
+		]);
 	}
 
 	public function index(): JsonResponse
 	{
-		$notifications = Notification::where(function ($query) {
-			$query->where('notifiable_type', Quote::class)
-				->orWhere('notifiable_type', User::class);
-		})
-			->where('from', '!=', auth()->user()->name)
-			->with('notifiable', 'notifiable.comments', 'notifiable.comments.user')
+		$user = auth('sanctum')->user();
+		$notifications = Notification::with('quotes', 'user', 'user.quotes', 'quotes.comments.user', 'quotes.movie')
+			->where('to', $user->id)
+			->where('from', '!=', $user->name)
 			->orderBy('created_at', 'desc')
 			->get();
 
-		$notifications->each(function ($notification) {
-			$notification->sender = $notification->notifiable->user;
-		});
 		return response()->json($notifications);
 	}
 

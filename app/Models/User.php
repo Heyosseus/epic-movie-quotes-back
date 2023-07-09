@@ -84,8 +84,13 @@ class User extends Authenticatable
 		return $this->hasMany(Comment::class, 'user_id');
 	}
 
-	public function notifications(): MorphMany
+//
+//	public function notifications(): MorphMany
+//	{
+//		return $this->morphMany(Notification::class, 'notifiable');
+//	}
+	public function notifications(): HasMany
 	{
-		return $this->morphMany(Notification::class, 'notifiable');
+		return $this->hasMany(Notification::class, 'user_id');
 	}
 }

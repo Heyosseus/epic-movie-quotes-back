@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Quote extends Model
 {
@@ -36,8 +35,13 @@ class Quote extends Model
 		return $this->hasMany(Comment::class, 'quote_id', 'id');
 	}
 
-	public function notifications(): MorphMany
+//	public function notifications()
+//	{
+//        $this->morphMany(Notification::class, 'notifiable');
+//	}
+
+	public function notifications(): HasMany
 	{
-		return $this->morphMany(Notification::class, 'notifiable');
+		return $this->hasMany(Notification::class, 'quote_id', 'id');
 	}
 }
