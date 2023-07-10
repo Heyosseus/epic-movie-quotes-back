@@ -35,11 +35,6 @@ class Quote extends Model
 		return $this->hasMany(Comment::class, 'quote_id', 'id');
 	}
 
-//	public function notifications()
-//	{
-//        $this->morphMany(Notification::class, 'notifiable');
-//	}
-
 	public function notifications(): HasMany
 	{
 		return $this->hasMany(Notification::class, 'quote_id', 'id');

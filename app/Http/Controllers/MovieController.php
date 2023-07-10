@@ -33,8 +33,8 @@ class MovieController extends Controller
 
 		$movies = $query->get();
 
-		if (request('search') && $movies->isEmpty()) {
-			$searchQuery = request('search');
+		if ($request->has('search') && $movies->isEmpty()) {
+			$searchQuery = $request->input('search');
 			$movies = Movie::where('title->en', 'LIKE', '%' . $searchQuery . '%')
 				->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%')
 				->with('quotes')
