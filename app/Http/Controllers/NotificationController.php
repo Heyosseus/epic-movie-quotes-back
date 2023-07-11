@@ -15,16 +15,17 @@ class NotificationController extends Controller
 		$quoteId = $request->input('quote_id');
 
 		$notification = (object) [
-			'to'       => $user->id,
-			'from'     => auth('sanctum')->user()->name,
-			'quote_id' => $quoteId,
-			'type'     => $type,
+			'to'              => $user->id,
+			'from'            => auth('sanctum')->user()->name,
+			'quote_id'        => $quoteId,
+			'type'            => $type,
+			'profile_picture' => auth('sanctum')->user()->profile_picture,
+			'created_at'      => now(),
+			'read'            => 0,
 		];
 
 		event(new NotificationReceived($notification));
 		$this->saveNotification($notification);
-		$notification = Notification::with('quotes', 'quotes.movie', 'user')->latest()->first();
-
 		return response()->json(['message' => 'success', 'notification'=> $notification], 200);
 	}
 
