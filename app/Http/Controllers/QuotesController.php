@@ -21,10 +21,9 @@ class QuotesController extends Controller
 				->orWhere('body->ka', 'LIKE', '%' . $query . '%')
 				->get();
 		} else {
-			$perPage = $request->input('per_page', 2);
 			$quotes = Quote::with('movie', 'user', 'comments', 'comments.user', 'likes')
 				->orderBy('created_at', 'desc')
-				->paginate($perPage);
+				->paginate(3);
 		}
 		$quotes->load('movie', 'user', 'comments', 'comments.user');
 		return QuoteResource::collection($quotes);

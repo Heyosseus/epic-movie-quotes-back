@@ -7,19 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Translatable\HasTranslations;
 
 class Movie extends Model
 {
-	use HasFactory , HasTranslations;
+	use HasFactory;
 
 	protected $guarded = ['id'];
 
 	protected $casts = [
 		'title' => 'array',
 	];
-
-	public array $translatable = ['title', 'description', 'director', 'genres'];
 
 	public function user(): BelongsTo
 	{

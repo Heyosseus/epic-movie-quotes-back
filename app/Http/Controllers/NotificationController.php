@@ -19,7 +19,7 @@ class NotificationController extends Controller
 			'from'            => auth('sanctum')->user()->name,
 			'quote_id'        => $quoteId,
 			'type'            => $type,
-			'profile_picture' => auth('sanctum')->user()->profile_picture,
+			'profile_picture' => auth('sanctum')->user()->profile_picture ?? null,
 			'created_at'      => now(),
 			'read'            => 0,
 		];
