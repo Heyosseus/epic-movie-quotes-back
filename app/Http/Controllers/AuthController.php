@@ -8,6 +8,7 @@ use App\Jobs\SendEmailJob;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -26,17 +27,36 @@ class AuthController extends Controller
 		return response()->json(['user' => $newUser], 200);
 	}
 
-	public function login(AuthLoginRequest $request): object
-	{
-		$attrs = $request->validated();
+//	public function login(AuthLoginRequest $request): object
+//	{
+//		$attrs = $request->validated();
+//
+//		if (Auth::attempt($attrs)) {
+//			$user = Auth::user();
+//			return response()->json(['user' => $user], 200);
+//		} else {
+//			return response()->json(['message' => 'Invalid credentials'], 401);
+//		}
+//	}
+		public function login(AuthLoginRequest $request): object
+		{
+			try {
+				$attrs = $request->validated();
 
-		if (Auth::attempt($attrs)) {
-			$user = Auth::user();
-			return response()->json(['user' => $user], 200);
-		} else {
-			return response()->json(['message' => 'Invalid credentials'], 401);
+				if (Auth::attempt($attrs, true)) {
+					$user = Auth::user();
+
+					return response()->json(['user' => $user], 200);
+				} else {
+					throw ValidationException::withMessages([
+						'email'    => 'Email credentials are incorrect.',
+						'password' => 'Password credentials are incorrect.',
+					]);
+				}
+			} catch (ValidationException $e) {
+				return response()->json(['errors' => $e->errors()], 401);
+			}
 		}
-	}
 
 	public function logout(): object
 	{

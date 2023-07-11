@@ -23,7 +23,7 @@ class NotificationController extends Controller
 
 		event(new NotificationReceived($notification));
 		$this->saveNotification($notification);
-		$notification = Notification::with('quotes', 'quotes.movie')->latest()->first();
+		$notification = Notification::with('quotes', 'quotes.movie', 'user')->latest()->first();
 
 		return response()->json(['message' => 'success', 'notification'=> $notification], 200);
 	}
