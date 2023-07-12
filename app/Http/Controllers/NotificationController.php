@@ -15,17 +15,18 @@ class NotificationController extends Controller
 		$quoteId = $request->input('quote_id');
 
 		$notification = (object) [
-			'to'       => $user->id,
-			'from'     => auth('sanctum')->user()->name,
-			'quote_id' => 1,
-			'comment'  => $type === 'comment' ? 'commented on your quote' : null,
-			'like'     => $type === 'like' ? 'liked your quote' : null,
+			'to'              => $user->id,
+			'from'            => auth('sanctum')->user()->name,
+			'quote_id'        => $quoteId,
+			'type'            => $type,
+			'profile_picture' => auth('sanctum')->user()->profile_picture ?? null,
+			'created_at'      => now(),
+			'read'            => 0,
 		];
 
 		event(new NotificationReceived($notification));
 		$this->saveNotification($notification);
-
-		return response()->json(['message' => 'success'], 200);
+		return response()->json(['message' => 'success', 'notification'=> $notification], 200);
 	}
 
 	private function saveNotification($notification): void
@@ -35,15 +36,14 @@ class NotificationController extends Controller
 			'from'     => $notification->from,
 			'user_id'  => auth('sanctum')->user()->id,
 			'quote_id' => $notification->quote_id,
-			'like'     => $notification->like,
-			'comment'  => $notification->comment,
+			'type'     => $notification->type,
 		]);
 	}
 
 	public function index(): JsonResponse
 	{
 		$user = auth('sanctum')->user();
-		$notifications = Notification::with('quotes', 'user')
+		$notifications = Notification::with('quotes', 'user', 'user.quotes', 'quotes.comments.user', 'quotes.movie')
 			->where('to', $user->id)
 			->where('from', '!=', $user->name)
 			->orderBy('created_at', 'desc')
@@ -52,19 +52,16 @@ class NotificationController extends Controller
 		return response()->json($notifications);
 	}
 
-	public function getFilteredNotifications($userId): JsonResponse
-	{
-		$notifications = Notification::where('user_id', $userId)
-			->where('from', '!=', auth()->user()->name)
-			->get();
+		public function markAsRead(Notification $notification): JsonResponse
+		{
+			$notification->update(['read' => true]);
 
-		return response()->json($notifications);
-	}
+			return response()->json(['message' => 'Notification marked as read'], 200);
+		}
 
-	public function markAsRead(Notification $notification): JsonResponse
-	{
-		$notification->update(['read' => true]);
-
-		return response()->json(['message' => 'Notification marked as read'], 200);
-	}
+		public function markAllAsRead(): JsonResponse
+		{
+			Notification::query()->update(['read' => true]);
+			return response()->json(['message' => 'Notifications marked as read'], 200);
+		}
 }

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
-use App\Mail\NewEmailMail;
+use App\Jobs\UpdateEmailJob;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
 
 class ProfileController extends Controller
 {
@@ -20,12 +19,10 @@ class ProfileController extends Controller
 		$user->update($attr);
 
 		if ($user->email !== $oldEmail) {
-			Mail::to($user->email)->send(new NewEmailMail($user));
-			$user->email_verified_at = now();
+			UpdateEmailJob::dispatch($user);
 		}
 
 		if ($request->hasFile('profile_picture')) {
-			// Handle profile picture upload
 			$profile_picture = $request->file('profile_picture');
 			$filename = time() . '.' . $profile_picture->getClientOriginalExtension();
 			$path = $profile_picture->storeAs('public/images', $filename);

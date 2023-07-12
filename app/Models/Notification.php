@@ -21,6 +21,6 @@ class Notification extends Model
 
 	public function quotes(): BelongsTo
 	{
-		return $this->belongsTo(Quotes::class, 'quote_id');
+		return $this->belongsTo(Quote::class, 'quote_id');
 	}
 }

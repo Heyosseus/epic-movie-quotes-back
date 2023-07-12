@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
-use App\Mail\AccountActivationMail;
+use App\Jobs\SendEmailJob;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -23,25 +23,31 @@ class AuthController extends Controller
 			$newUser = User::create($attr);
 		}
 
-		Mail::to($newUser->email)->send(new AccountActivationMail($newUser));
-		$newUser->email_verified_at = now();
-		$newUser->save();
+		SendEmailJob::dispatch($newUser);
 		return response()->json(['user' => $newUser], 200);
 	}
 
-	public function login(AuthLoginRequest $request)
-	{
-		$attrs = $request->validated();
+		public function login(AuthLoginRequest $request): object
+		{
+			try {
+				$attrs = $request->validated();
 
-		if (Auth::attempt($attrs)) {
-			$user = Auth::user();
-			return response()->json(['user' => $user], 200);
-		} else {
-			return response()->json(['message' => 'Invalid credentials'], 401);
+				if (Auth::attempt($attrs)) {
+					$user = Auth::user();
+
+					return response()->json(['user' => $user], 200);
+				} else {
+					throw ValidationException::withMessages([
+						'email'    => 'Email credentials are incorrect.',
+						'password' => 'Password credentials are incorrect.',
+					]);
+				}
+			} catch (ValidationException $e) {
+				return response()->json(['errors' => $e->errors()], 401);
+			}
 		}
-	}
 
-	public function logout()
+	public function logout(): object
 	{
 		try {
 			Auth::guard('web')->logout();

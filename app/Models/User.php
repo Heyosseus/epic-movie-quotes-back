@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -52,8 +53,6 @@ class User extends Authenticatable
 		'password'          => 'hashed',
 	];
 
-	use HasApiTokens, HasFactory, Notifiable;
-
 	public function password(): Attribute
 	{
 		return Attribute::make(
@@ -66,14 +65,21 @@ class User extends Authenticatable
 		return $this->hasMany(Movie::class);
 	}
 
+	public function likes(): belongsToMany
+	{
+		return $this->belongsToMany(Quote::class, 'quote_user', 'user_id', 'quote_id')
+			->withPivot('likes')
+			->withTimestamps();
+	}
+
 	public function quotes(): HasMany
 	{
-		return $this->hasMany(Quotes::class, 'user_id');
+		return $this->hasMany(Quote::class, 'user_id');
 	}
 
 	public function comments(): HasMany
 	{
-		return $this->hasMany(Comments::class, 'user_id');
+		return $this->hasMany(Comment::class, 'user_id');
 	}
 
 	public function notifications(): HasMany

@@ -10,7 +10,7 @@ class SessionController extends Controller
 	public function checkSession(): JsonResponse
 	{
 		$isSessionActive = false;
-		$isGoogleAuthenticated = session('google_authenticated') === true;
+		$isGoogleAuthenticated = session('google_authenticated') ?? false;
 
 		if (Auth::check()) {
 			$isSessionActive = true;

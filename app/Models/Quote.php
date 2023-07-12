@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Quotes extends Model
+class Quote extends Model
 {
 	use HasFactory;
 
@@ -23,14 +23,16 @@ class Quotes extends Model
 		return $this->belongsTo(User::class, 'user_id', 'id');
 	}
 
-	public function comments(): HasMany
+	public function likes()
 	{
-		return $this->hasMany(Comments::class, 'quote_id', 'id');
+		return $this->belongsToMany(User::class, 'quote_user', 'quote_id', 'user_id')
+			->withPivot('likes')
+			->withTimestamps();
 	}
 
-	public function likes(): HasMany
+	public function comments(): HasMany
 	{
-		return $this->hasMany(Likes::class, 'quote_id', 'id');
+		return $this->hasMany(Comment::class, 'quote_id', 'id');
 	}
 
 	public function notifications(): HasMany

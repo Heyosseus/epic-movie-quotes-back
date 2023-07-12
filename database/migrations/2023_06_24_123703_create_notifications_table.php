@@ -15,10 +15,11 @@ return new class extends Migration {
 			$table->string('to');
 			$table->string('from');
 			$table->boolean('read')->default(false);
+			$table->string('type');
+			//			$table->unsignedBigInteger('notifiable_id');
+			//			$table->string('notifiable_type');
 			$table->string('user_id')->references('id')->on('users')->onDelete('cascade');
 			$table->string('quote_id')->references('id')->on('quotes')->onDelete('cascade');
-			$table->string('like')->nullable();
-			$table->string('comment')->nullable();
 			$table->timestamps();
 		});
 	}

@@ -4,42 +4,36 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
-use App\Models\Quotes;
+use App\Http\Resources\QuoteResource;
+use App\Models\Movie;
+use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class QuotesController extends Controller
 {
-	public function index($movieId): JsonResponse
+	public function index(Request $request, Movie $movie): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
-		$quote = Quotes::with('comments', 'likes')->where('movie_id', $movieId)->orderBy('created_at', 'desc')->get();
-
-		return response()->json(['quote' => $quote], 200);
-	}
-
-	public function searchQuotes(Request $request, $query)
-	{
-		$quotes = Quotes::where('body', 'LIKE', '%' . $query . '%')->get();
-		return response()->json($quotes);
-	}
-
-	public function newsFeed(): JsonResponse
-	{
-		$quotes = Quotes::with('movie', 'user', 'comments', 'likes', 'comments.user')
-		->orderBy('created_at', 'desc')
-			->take(10)
-			->get();
-
-		$quotes->load('movie', 'user', 'comments', 'likes', 'comments.user');
-
-		return response()->json(['quotes' => $quotes], 200);
+		$this->authorize('index', Quote::class);
+		if ($request->has('query')) {
+			$query = $request->query('query');
+			$quotes = Quote::with('movie', 'user', 'comments', 'likes')->where('body->en', 'LIKE', '%' . $query . '%')
+				->orWhere('body->ka', 'LIKE', '%' . $query . '%')
+				->get();
+		} else {
+			$quotes = Quote::with('movie', 'user', 'comments', 'comments.user', 'likes')
+				->orderBy('created_at', 'desc')
+				->paginate(3);
+		}
+		$quotes->load('movie', 'user', 'comments', 'comments.user');
+		return QuoteResource::collection($quotes);
 	}
 
 	public function store(AddQuoteRequest $request): JsonResponse
 	{
 		$attr = $request->all();
-
-		$quote = Quotes::create($attr);
+		$this->authorize('store', Quote::class);
+		$quote = Quote::create($attr);
 
 		if ($request->hasFile('thumbnail')) {
 			$thumbnail = $request->file('thumbnail');
@@ -54,16 +48,16 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function show(Quotes $quote)
+	public function show(Quote $quote): JsonResponse
 	{
 		$quote->load('movie', 'user', 'comments', 'likes', 'comments.user');
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function update(UpdateQuoteRequest $request, $quoteId)
+	public function update(UpdateQuoteRequest $request, $quoteId): JsonResponse
 	{
-		$quote = Quotes::find($quoteId);
-
+		$quote = Quote::find($quoteId);
+		$this->authorize('update', $quote);
 		$quote->body = $request->input('body');
 
 		$quote->movie_id = $request->input('movie_id');
@@ -83,10 +77,9 @@ class QuotesController extends Controller
 		return response()->json(['quote' => $quote], 200);
 	}
 
-	public function destroy($id)
+	public function destroy($id): JsonResponse
 	{
-		Quotes::destroy($id);
-
+		Quote::destroy($id);
 		return response()->json(['message' => 'Quote deleted successfully'], 200);
 	}
 }

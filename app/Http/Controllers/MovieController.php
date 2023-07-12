@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMovieRequest;
+use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -10,10 +11,10 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-	public function index(): JsonResponse
+	public function index(Request $request): JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
 		$user = auth()->user();
-
+		$this->authorize('index', Movie::class);
 		if (!$user instanceof User) {
 			return response()->json(['error' => 'User not found'], 404);
 		}
@@ -23,34 +24,35 @@ class MovieController extends Controller
 			->orderBy('created_at', 'desc');
 
 		if (request('search')) {
-			$query->where('title', 'LIKE', '%' . request('search') . '%');
+			$searchQuery = request('search');
+			$query->where(function ($q) use ($searchQuery) {
+				$q->where('title->en', 'LIKE', '%' . $searchQuery . '%')
+					->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%');
+			});
 		}
 
 		$movies = $query->get();
 
-		return response()->json(['movies' => $movies], 200);
+		if ($request->has('search') && $movies->isEmpty()) {
+			$searchQuery = $request->input('search');
+			$movies = Movie::where('title->en', 'LIKE', '%' . $searchQuery . '%')
+				->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%')
+				->with('quotes')
+				->get();
+		}
+
+		return MovieResource::collection($movies);
 	}
 
-	public function allMovies(): JsonResponse
+	public function show(Movie $movie): MovieResource
 	{
-		$movies = Movie::all();
-		return response()->json(['movies' => $movies], 200);
+		$movie->load('quotes', 'genres', 'user', 'quotes.comments', 'quotes.likes');
+		return new MovieResource($movie);
 	}
 
-	public function searchMovies(Request $request, $query)
+	public function store(AddMovieRequest $request)
 	{
-		$movies = Movie::where('title', 'LIKE', '%' . $query . '%')->get();
-		return response()->json($movies);
-	}
-
-	public function show(Movie $movie): JsonResponse
-	{
-		$movie->load('quotes', 'genres', 'user');
-		return response()->json(['movie' => $movie], 200);
-	}
-
-	public function store(AddMovieRequest $request): JsonResponse
-	{
+		$this->authorize('store', Movie::class);
 		$attr = $request->all();
 
 		$movie = Movie::create($attr);
@@ -68,13 +70,13 @@ class MovieController extends Controller
 			$movie->poster = $relativePath;
 			$movie->save();
 		}
-		return response()->json(['movie' => $movie], 200);
+		return new MovieResource($movie);
 	}
 
-	public function update(AddMovieRequest $request, Movie $movie): JsonResponse
+	public function update(AddMovieRequest $request, Movie $movie): MovieResource
 	{
+		$this->authorize('update', $movie);
 		$attr = $request->validated();
-
 		$movie->update($attr);
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');
@@ -87,7 +89,7 @@ class MovieController extends Controller
 			$movie->save();
 		}
 
-		return response()->json(['movie' => $movie], 200);
+		return new MovieResource($movie);
 	}
 
 	public function destroy($id): JsonResponse

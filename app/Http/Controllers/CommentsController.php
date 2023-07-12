@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Events\CommentNotification;
 use App\Http\Requests\AddCommentRequest;
-use App\Models\Comments;
+use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
 
 class CommentsController extends Controller
 {
 	public function index($quoteId): JsonResponse
 	{
-		$comments = Comments::with('quote', 'quote.movie', 'user')
+		$comments = Comment::with('quote', 'quote.movie', 'user')
 			->where('quote_id', $quoteId)
 			->orderBy('created_at', 'asc')
 			->get();
@@ -23,21 +23,12 @@ class CommentsController extends Controller
 	{
 		$attributes = $request->validated();
 
-		$comment = Comments::create([
-			'quote_id' => $request->quote_id,
-			'user_id'  => $request->user()->id,
-			'content'  => $request->input('content'),
+		$comment = Comment::create($attributes)->load('user');
+
+		event(new CommentNotification($comment));
+		return response()->json([
+			'message' => 'Comment added successfully',
+			'comment' => $comment,
 		]);
-		if ($comment->save()) {
-			event(new CommentNotification($comment));
-			return response()->json([
-				'message' => 'Comment added successfully',
-				'comment' => $comment,
-			]);
-		} else {
-			return response()->json([
-				'message' => 'Comment could not be added',
-			], 500);
-		}
 	}
 }

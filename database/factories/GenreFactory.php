@@ -16,69 +16,67 @@ class GenreFactory extends Factory
 	 */
 	public function definition(): array
 	{
-		//		$genres = [
-		//			[
-		//				'name' => [
-		//					'en' => 'Action',
-		//					'ka' => 'მოქმედება',
-		//				],
-		//			],
-		//			[
-		//				'name' => [
-		//					'en' => 'Comedy',
-		//					'ka' => 'კომედია',
-		//				],
-		//			],
-		//			[
-		//				'name' => [
-		//					'en' => 'Drama',
-		//					'ka' => 'დრამა',
-		//				],
-		//			],
-		//			[
-		//				'name' => [
-		//					'en' => 'Fantasy',
-		//					'ka' => 'ფანტასტიკა',
-		//				],
-		//			],
-		//			[
-		//				'name' => [
-		//					'en' => 'Horror',
-		//					'ka' => 'საშინელება',
-		//				],
-		//			],
-		//			[
-		//				'name' => [
-		//					'en' => 'Mystery',
-		//					'ka' => 'მისტიკა',
-		//				],
-		//			],
-		//			[
-		//				'name' => [
-		//					'en' => 'Romance',
-		//					'ka' => 'რომანი',
-		//				],
-		//			],
-		//			[
-		//				'name' => [
-		//					'en' => 'Thriller',
-		//					'ka' => 'თრილერი',
-		//				],
-		//			],
-		//			[
-		//				'name' => [
-		//					'en' => 'Western',
-		//					'ka' => 'ვესტერნი',
-		//				],
-		//			],
-		//		];
-		//		return $genres[$this->faker->numberBetween(0, count($genres) - 1)];
-		//	}
+		$genres = [
+			[
+				'name' => [
+					'en' => 'Action',
+					'ka' => 'მოქმედება',
+				],
+			],
+			[
+				'name' => [
+					'en' => 'Comedy',
+					'ka' => 'კომედია',
+				],
+			],
+			[
+				'name' => [
+					'en' => 'Drama',
+					'ka' => 'დრამა',
+				],
+			],
+			[
+				'name' => [
+					'en' => 'Fantasy',
+					'ka' => 'ფანტასტიკა',
+				],
+			],
+			[
+				'name' => [
+					'en' => 'Horror',
+					'ka' => 'საშინელება',
+				],
+			],
+			[
+				'name' => [
+					'en' => 'Mystery',
+					'ka' => 'მისტიკა',
+				],
+			],
+			[
+				'name' => [
+					'en' => 'Romance',
+					'ka' => 'რომანი',
+				],
+			],
+			[
+				'name' => [
+					'en' => 'Thriller',
+					'ka' => 'თრილერი',
+				],
+			],
+			[
+				'name' => [
+					'en' => 'Western',
+					'ka' => 'ვესტერნი',
+				],
+			],
+		];
+
+		$genre = $genres[$this->faker->numberBetween(0, count($genres) - 1)];
+
 		return [
-			'name' => json_encode([
-				'en' => $this->faker->word(),
-				'ka' => $this->faker->word(),
-			]),
+			'name' => json_encode($genre['name']),
 		];
 	}
 }

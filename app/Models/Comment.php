@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Comments extends Model
+class Comment extends Model
 {
 	use HasFactory;
 
@@ -19,6 +19,6 @@ class Comments extends Model
 
 	public function quote(): BelongsTo
 	{
-		return $this->belongsTo(Quotes::class, 'quote_id');
+		return $this->belongsTo(Quote::class, 'quote_id');
 	}
 }
