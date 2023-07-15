@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
 use App\Jobs\UpdateEmailJob;
-use App\Models\User;
+use Illuminate\Http\JsonResponse;
 
 class ProfileController extends Controller
 {
-	public function update(UpdateProfileRequest $request, User $old_user)
+	public function update(UpdateProfileRequest $request): JsonResponse
 	{
-		$attr = $request->validated();
+		$attributes = $request->validated();
 
 		$user = auth()->user();
 
 		$oldEmail = $user->email;
-
-		$user->update($attr);
+		$user->update($attributes);
 
 		if ($user->email !== $oldEmail) {
 			UpdateEmailJob::dispatch($user);

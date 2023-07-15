@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddMovieRequest;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,9 +14,6 @@ class MovieController extends Controller
 	{
 		$user = auth()->user();
 		$this->authorize('index', Movie::class);
-		if (!$user instanceof User) {
-			return response()->json(['error' => 'User not found'], 404);
-		}
 
 		$query = $user->movies()
 			->with('quotes', 'genres', 'user')
@@ -25,23 +21,37 @@ class MovieController extends Controller
 
 		if (request('search')) {
 			$searchQuery = request('search');
-			$query->where(function ($q) use ($searchQuery) {
-				$q->where('title->en', 'LIKE', '%' . $searchQuery . '%')
-					->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%');
-			});
+			$this->searchMovies($query, $searchQuery);
 		}
 
 		$movies = $query->get();
 
+		$movies = $this->searchMoviesIfEmpty($request, $movies);
+
+		return MovieResource::collection($movies);
+	}
+
+	public function searchMovies($query, $searchQuery): void
+	{
+		$query->where(function ($q) use ($searchQuery) {
+			$q->where('title->en', 'LIKE', '%' . $searchQuery . '%')
+				->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%');
+		});
+	}
+
+	public function searchMoviesIfEmpty($request, $movies)
+	{
 		if ($request->has('search') && $movies->isEmpty()) {
 			$searchQuery = $request->input('search');
-			$movies = Movie::where('title->en', 'LIKE', '%' . $searchQuery . '%')
-				->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%')
+			$movies = Movie::where(function ($query) use ($searchQuery) {
+				$query->where('title->en', 'LIKE', '%' . $searchQuery . '%')
+					->orWhere('title->ka', 'LIKE', '%' . $searchQuery . '%');
+			})
 				->with('quotes')
 				->get();
 		}
 
-		return MovieResource::collection($movies);
+		return $movies;
 	}
 
 	public function show(Movie $movie): MovieResource
@@ -50,12 +60,12 @@ class MovieController extends Controller
 		return new MovieResource($movie);
 	}
 
-	public function store(AddMovieRequest $request)
+	public function store(AddMovieRequest $request): MovieResource
 	{
 		$this->authorize('store', Movie::class);
-		$attr = $request->all();
+		$attributes = $request->all();
 
-		$movie = Movie::create($attr);
+		$movie = Movie::create($attributes);
 		$genres = json_decode($request->input('genre'));
 
 		$movie->genres()->attach($genres);
@@ -76,8 +86,8 @@ class MovieController extends Controller
 	public function update(AddMovieRequest $request, Movie $movie): MovieResource
 	{
 		$this->authorize('update', $movie);
-		$attr = $request->validated();
-		$movie->update($attr);
+		$attributes = $request->validated();
+		$movie->update($attributes);
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');
 			$filename = time() . '.' . $poster->getClientOriginalExtension();

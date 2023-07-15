@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\LikesController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,60 +24,61 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 
 Route::controller(\App\Http\Controllers\AuthController::class)->group(function () {
-	Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
-	Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
+	Route::post('/login', 'login');
+	Route::post('/register', 'register');
+	Route::get('/cookie-credentials', [App\Http\Controllers\AuthController::class, 'getDecryptedCredentials']);
 });
 
 Route::controller(\App\Http\Controllers\RecoveryPasswordController::class)->group(function () {
-	Route::post('/forgot-password', [App\Http\Controllers\RecoveryPasswordController::class, 'store']);
-	Route::put('/reset-password', [App\Http\Controllers\RecoveryPasswordController::class, 'update']);
+	Route::post('/forgot-password', 'store');
+	Route::put('/reset-password', 'update');
 });
 
 // google auth
 Route::controller(\App\Http\Controllers\GoogleAuthController::class)->group(function () {
-	Route::get('/auth/google/redirect', [App\Http\Controllers\GoogleAuthController::class, 'redirect'])->name('google-auth');
-	Route::get('/auth/google/callback', [App\Http\Controllers\GoogleAuthController::class, 'callback'])->name('google-auth-callback');
+	Route::get('/auth/google/redirect', 'redirect')->name('google-auth');
+	Route::get('/auth/google/callback', 'callback')->name('google-auth-callback');
 });
 
 // movie routes
 Route::controller(\App\Http\Controllers\MovieController::class)->group(function () {
-	Route::get('/movies', [App\Http\Controllers\MovieController::class, 'index']);
-	Route::get('/all-movies', [App\Http\Controllers\MovieController::class, 'allMovies']);
-	Route::get('/search-movies/{query}', [App\Http\Controllers\MovieController::class, 'searchMovies']);
-	Route::post('/add-movies', [App\Http\Controllers\MovieController::class, 'store']);
-	Route::post('/update-movies/{movie}', [App\Http\Controllers\MovieController::class, 'update']);
-	Route::get('/movies/{movie}', [App\Http\Controllers\MovieController::class, 'show']);
-	Route::delete('/movies/{movie}', [App\Http\Controllers\MovieController::class, 'destroy']);
+	Route::get('/movies', 'index');
+	Route::get('/all-movies', 'allMovies');
+	Route::get('/search-movies/{query}', 'searchMovies');
+	Route::post('/add-movies', 'store');
+	Route::post('/update-movies/{movie}', 'update');
+	Route::get('/movies/{movie}', 'show');
+	Route::delete('/movies/{movie}', 'destroy');
 });
 
 // quote routes
-Route::controller(\App\Http\Controllers\QuotesController::class)->group(function () {
-	Route::get('/quotes ', [App\Http\Controllers\QuotesController::class, 'index']);
-	Route::get('/search-quotes/{query}', [App\Http\Controllers\QuotesController::class, 'searchQuotes']);
-	Route::post('/add-quotes', [App\Http\Controllers\QuotesController::class, 'store']);
-	Route::post('/update-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'update']);
-	Route::get('/show-quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'show']);
-	Route::delete('/quotes/{quote}', [App\Http\Controllers\QuotesController::class, 'destroy']);
+Route::controller(\App\Http\Controllers\QuoteController::class)->group(function () {
+	Route::get('/quotes ', 'index');
+	Route::get('/search-quotes/{query}', 'searchQuotes');
+	Route::post('/add-quotes', 'store');
+	Route::post('/update-quotes/{quote}', 'update');
+	Route::get('/show-quotes/{quote}', 'show');
+	Route::delete('/quotes/{quote}', 'destroy');
 });
 //comments
-Route::controller(\App\Http\Controllers\CommentsController::class)->group(function () {
-	Route::get('/comments/{quoteId}', [App\Http\Controllers\CommentsController::class, 'index']);
-	Route::post('/add-comments', [App\Http\Controllers\CommentsController::class, 'store']);
+Route::controller(\App\Http\Controllers\CommentController::class)->group(function () {
+	Route::get('/comments/{quoteId}', 'index');
+	Route::post('/add-comments', 'store');
 });
 //likes
-Route::controller(\App\Http\Controllers\LikesController::class)->group(function () {
-	Route::get('/likes/{quoteId}', [App\Http\Controllers\LikesController::class, 'index']);
-	Route::post('/quotes/{quote}/like/{user}', [LikesController::class, 'store'])->middleware('auth:sanctum');
-	Route::delete('/remove-likes', [App\Http\Controllers\LikesController::class, 'destroy']);
+Route::controller(\App\Http\Controllers\LikeController::class)->group(function () {
+	Route::get('/likes/{quoteId}', 'index');
+	Route::post('/quotes/{quote}/like/{user}', 'store')->middleware('auth:sanctum');
+	Route::delete('/remove-likes', 'destroy');
 });
 
 //profile
 Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update']);
 
 //genres
-Route::get('/genres', [App\Http\Controllers\GenresController::class, 'index']);
+Route::get('/genres', [App\Http\Controllers\GenreController::class, 'index']);
 
-Route::post('/add-genres', [App\Http\Controllers\GenresController::class, 'addGenres']);
+Route::post('/add-genres', [App\Http\Controllers\GenreController::class, 'addGenres']);
 
 // session
 Route::get('/check-session', [App\Http\Controllers\SessionController::class, 'checkSession']);

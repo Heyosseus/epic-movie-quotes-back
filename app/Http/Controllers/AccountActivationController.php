@@ -10,8 +10,7 @@ class AccountActivationController extends Controller
 	{
 		$user = User::where(['token' => $token])->first();
 		if ($user) {
-			$email = $user->email;
-			$user->email_verified_at = now();
+			$user->markEmailAsVerified();
 			$user->save();
 			return response()->json(['message' => 'Success! account is activated!']);
 		}

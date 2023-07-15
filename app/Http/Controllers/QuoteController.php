@@ -10,7 +10,7 @@ use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class QuotesController extends Controller
+class QuoteController extends Controller
 {
 	public function index(Request $request, Movie $movie): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
@@ -31,9 +31,9 @@ class QuotesController extends Controller
 
 	public function store(AddQuoteRequest $request): JsonResponse
 	{
-		$attr = $request->all();
+		$attributes = $request->all();
 		$this->authorize('store', Quote::class);
-		$quote = Quote::create($attr);
+		$quote = Quote::create($attributes);
 
 		if ($request->hasFile('thumbnail')) {
 			$thumbnail = $request->file('thumbnail');

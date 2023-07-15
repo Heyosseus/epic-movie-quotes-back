@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use App\Models\Quote;
 
-class LikesController extends Controller
+class LikeController extends Controller
 {
 	public function store(Quote $quote, User $user): JsonResponse
 	{
@@ -35,6 +35,6 @@ class LikesController extends Controller
 		}
 		return response()->json([
 			'like' => $quote->likes()->count(),
-		], 500);
+		], 200);
 	}
 }

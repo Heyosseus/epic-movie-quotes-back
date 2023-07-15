@@ -22,7 +22,7 @@ class UpdateProfileRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name'            => 'string',
+			'name'            => 'nullable|string',
 			'email'           => 'email',
 			'profile_picture' => 'image',
 		];

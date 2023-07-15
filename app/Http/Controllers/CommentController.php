@@ -7,7 +7,7 @@ use App\Http\Requests\AddCommentRequest;
 use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
 
-class CommentsController extends Controller
+class CommentController extends Controller
 {
 	public function index($quoteId): JsonResponse
 	{
