@@ -13,20 +13,25 @@ class NotificationController extends Controller
 	public function notify(User $user, $type, Request $request): JsonResponse
 	{
 		$quoteId = $request->input('quote_id');
+		$from = auth('sanctum')->user()->name;
 
 		$notification = (object) [
-			'to'              => $user->id,
-			'from'            => auth('sanctum')->user()->name,
-			'quote_id'        => $quoteId,
-			'type'            => $type,
-			'profile_picture' => auth('sanctum')->user()->profile_picture ?? null,
-			'created_at'      => now(),
-			'read'            => 0,
+			'to'         => $user->id,
+			'from'       => $from,
+			'quote_id'   => $quoteId,
+			'type'       => $type,
+			'created_at' => now(),
+			'read'       => 0,
 		];
+
+		if (auth('sanctum')->user()->profile_picture !== null) {
+			$notification->profile_picture = auth('sanctum')->user()->profile_picture;
+		}
 
 		event(new NotificationReceived($notification));
 		$this->saveNotification($notification);
-		return response()->json(['message' => 'success', 'notification'=> $notification], 200);
+
+		return response()->json(['message' => 'success', 'notification' => $notification], 200);
 	}
 
 	private function saveNotification($notification): void

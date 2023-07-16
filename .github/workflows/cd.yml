@@ -18,7 +18,10 @@
                    cd apps
                    cd rati-rukhadze-epic-movie-quotes-back
                    git pull origin main
+                   php artisan migrate
+                   php artisan queue:work
                    php artisan optimize:clear
                    php artisan config:clear
                    php artisan cache:clear
+                   php artisan config:cache
                  EOF

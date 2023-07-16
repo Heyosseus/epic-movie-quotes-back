@@ -7,7 +7,7 @@ use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class GenresController extends Controller
+class GenreController extends Controller
 {
 	public function index(): JsonResponse
 	{
@@ -17,7 +17,6 @@ class GenresController extends Controller
 
 	public function addGenres(Request $request, Movie $movies)
 	{
-		//		$movies = Movie::find($request->input('movie_id'));
 		$genres = $request->input('genres');
 		$movies->genres()->attach($genres);
 		return response()->json(['Genres attached'], 200);
