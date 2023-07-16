@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
-use App\Jobs\UpdateEmailJob;
+use App\Mail\NewEmailMail;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
 
 class ProfileController extends Controller
 {
@@ -18,7 +19,8 @@ class ProfileController extends Controller
 		$user->update($attributes);
 
 		if ($user->email !== $oldEmail) {
-			UpdateEmailJob::dispatch($user);
+			Mail::to($user->email)->send(new NewEmailMail($user));
+			$user->markEmailAsVerified();
 		}
 
 		if ($request->hasFile('profile_picture')) {
