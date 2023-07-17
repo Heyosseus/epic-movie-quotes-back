@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
-use App\Jobs\SendEmailJob;
+use App\Mail\AccountActivationMail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -21,7 +22,9 @@ class AuthController extends Controller
 
 		$newUser = User::create($attributes);
 
-		SendEmailJob::dispatch($newUser);
+		Mail::to($newUser->email)->send(new AccountActivationMail($newUser));
+		$newUser->markEmailAsVerified();
+		$newUser->save();
 		return response()->json(['user' => $newUser], 200);
 	}
 
