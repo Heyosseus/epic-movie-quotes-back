@@ -15,23 +15,25 @@ class NotificationController extends Controller
 		$quoteId = $request->input('quote_id');
 		$from = auth('sanctum')->user()->name;
 
-		$notification = (object) [
-			'to'         => $user->id,
-			'from'       => $from,
-			'quote_id'   => $quoteId,
-			'type'       => $type,
-			'created_at' => now(),
-			'read'       => 0,
-		];
+		if ($user->id !== auth('sanctum')->user()->id) {
+			$notification = (object) [
+				'to'         => $user->id,
+				'from'       => $from,
+				'quote_id'   => $quoteId,
+				'type'       => $type,
+				'created_at' => now(),
+				'read'       => 0,
+			];
 
-		if (auth('sanctum')->user()->profile_picture !== null) {
-			$notification->profile_picture = auth('sanctum')->user()->profile_picture;
+			if (auth('sanctum')->user()->profile_picture !== null) {
+				$notification->profile_picture = auth('sanctum')->user()->profile_picture;
+			}
+
+			event(new NotificationReceived($notification));
+			$this->saveNotification($notification);
 		}
 
-		event(new NotificationReceived($notification));
-		$this->saveNotification($notification);
-
-		return response()->json(['message' => 'success', 'notification' => $notification], 200);
+		return response()->json(['message' => 'success'], 200);
 	}
 
 	private function saveNotification($notification): void
@@ -59,14 +61,14 @@ class NotificationController extends Controller
 
 		public function markAsRead(Notification $notification): JsonResponse
 		{
-			$notification->update(['read' => true]);
+			$notification->update(['read' => 1]);
 
-			return response()->json(['message' => 'Notification marked as read'], 200);
+			return response()->json(['message' => 'Notification marked as read', $notification], 200);
 		}
 
 		public function markAllAsRead(): JsonResponse
 		{
-			Notification::query()->update(['read' => true]);
-			return response()->json(['message' => 'Notifications marked as read'], 200);
+			$notification = Notification::query()->update(['read' => 1]);
+			return response()->json(['message' => 'Notifications marked as read', $notification], 200);
 		}
 }

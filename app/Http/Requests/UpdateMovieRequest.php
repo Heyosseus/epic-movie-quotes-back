@@ -20,14 +20,22 @@ class UpdateMovieRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'title_en'        => 'string|nullable',
-			'title_ka'        => 'string|nullable',
-			'genre'           => 'nullable',
-			'director_en'     => 'string|nullable',
-			'director_ka'     => 'string|nullable',
-			'release_date'    => 'integer|nullable',
-			'description_en'  => 'string|nullable',
-			'description_ka'  => 'string|nullable',
+			'title_en'        => 'string',
+			'title_ka'        => 'string',
+			'director_en'     => 'string',
+			'director_ka'     => 'string',
+			'release_date'    => 'integer',
+			'description_en'  => 'string',
+			'description_ka'  => 'string',
 		];
+	}
+
+	protected function prepareForValidation(): void
+	{
+		$this->merge([
+			'title'       => ['en' => $this->title_en, 'ka' => $this->title_ka],
+			'director'    => json_encode(['en' => $this->director_en, 'ka' => $this->director_ka]),
+			'description' => json_encode(['en' => $this->description_en, 'ka' => $this->description_ka]),
+		]);
 	}
 }

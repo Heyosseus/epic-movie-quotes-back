@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMovieRequest;
+use App\Http\Requests\UpdateMovieRequest;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
@@ -63,7 +64,7 @@ class MovieController extends Controller
 	public function store(AddMovieRequest $request): MovieResource
 	{
 		$this->authorize('store', Movie::class);
-		$attributes = $request->all();
+		$attributes = $request->validated();
 
 		$movie = Movie::create($attributes);
 		$genres = json_decode($request->input('genre'));
@@ -83,11 +84,14 @@ class MovieController extends Controller
 		return new MovieResource($movie);
 	}
 
-	public function update(AddMovieRequest $request, Movie $movie): MovieResource
+	public function update(UpdateMovieRequest $request, Movie $movie): MovieResource
 	{
 		$this->authorize('update', $movie);
-		$attributes = $request->validated();
-		$movie->update($attributes);
+		$movie->title = $request->input('title');
+		$movie->director = $request->input('director');
+		$movie->description = $request->input('description');
+		$movie->release_date = $request->input('release_date');
+
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');
 			$filename = time() . '.' . $poster->getClientOriginalExtension();
@@ -98,7 +102,7 @@ class MovieController extends Controller
 			$movie->poster = $relativePath;
 			$movie->save();
 		}
-
+		$movie->save();
 		return new MovieResource($movie);
 	}
 
