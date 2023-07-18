@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\auth\GoogleAuthController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*

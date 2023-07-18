@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\notifications\NotificationController;
+use App\Http\Controllers\Notifications\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,28 +20,28 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-	Route::post('/logout', [\App\Http\Controllers\auth\AuthController::class, 'logout'])->name('logout');
+	Route::post('/logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
 });
 
-Route::controller(\App\Http\Controllers\auth\AuthController::class)->group(function () {
+Route::controller(\App\Http\Controllers\Auth\AuthController::class)->group(function () {
 	Route::post('/login', 'login')->name('login');
 	Route::post('/register', 'register')->name('register');
-	Route::get('/cookie-credentials', [\App\Http\Controllers\auth\AuthController::class, 'getDecryptedCredentials'])->name('cookie-credentials');
+	Route::get('/cookie-credentials', [\App\Http\Controllers\Auth\AuthController::class, 'getDecryptedCredentials'])->name('cookie-credentials');
 });
 
-Route::controller(\App\Http\Controllers\profile\RecoveryPasswordController::class)->group(function () {
+Route::controller(\App\Http\Controllers\Profile\RecoveryPasswordController::class)->group(function () {
 	Route::post('/forgot-password', 'store')->name('forgot-password.store');
 	Route::put('/reset-password', 'update')->name('reset-password.update');
 });
 
 // google auth
-Route::controller(\App\Http\Controllers\auth\GoogleAuthController::class)->group(function () {
+Route::controller(\App\Http\Controllers\Auth\GoogleAuthController::class)->group(function () {
 	Route::get('/auth/google/redirect', 'redirect')->name('google-auth')->name('google.redirect');
 	Route::get('/auth/google/callback', 'callback')->name('google-auth-callback')->name('google.callback');
 });
 
 // movie routes
-Route::controller(\App\Http\Controllers\movies\MovieController::class)->group(function () {
+Route::controller(\App\Http\Controllers\Movies\MovieController::class)->group(function () {
 	Route::get('/movies', 'index')->name('movies.index');
 	Route::get('/all-movies', 'allMovies')->name('movies.all-movies');
 	Route::get('/search-movies/{query}', 'searchMovies')->name('movies.search-movies');
@@ -52,7 +52,7 @@ Route::controller(\App\Http\Controllers\movies\MovieController::class)->group(fu
 });
 
 // quote routes
-Route::controller(\App\Http\Controllers\quotes\QuoteController::class)->group(function () {
+Route::controller(\App\Http\Controllers\Quotes\QuoteController::class)->group(function () {
 	Route::get('/quotes ', 'index')->name('quotes.index');
 	Route::get('/search-quotes/{query}', 'searchQuotes')->name('quotes.search-quotes');
 	Route::post('/add-quotes', 'store')->name('quotes.store');
@@ -61,33 +61,33 @@ Route::controller(\App\Http\Controllers\quotes\QuoteController::class)->group(fu
 	Route::delete('/quotes/{quote}', 'destroy')->name('quotes.destroy');
 });
 //comments
-Route::controller(\App\Http\Controllers\notifications\CommentController::class)->group(function () {
+Route::controller(\App\Http\Controllers\Notifications\CommentController::class)->group(function () {
 	Route::get('/comments/{quoteId}', 'index')->name('comments.index');
 	Route::post('/add-comments', 'store')->name('comments.store');
 });
 //likes
-Route::controller(\App\Http\Controllers\notifications\LikeController::class)->group(function () {
+Route::controller(\App\Http\Controllers\Notifications\LikeController::class)->group(function () {
 	Route::get('/likes/{quoteId}', 'index')->name('likes.index');
 	Route::post('/quotes/{quote}/like/{user}', 'store')->name('likes.store')->middleware('auth:sanctum');
 	Route::delete('/remove-likes', 'destroy')->name('likes.destroy');
 });
 
 //profile
-Route::post('/profile', [\App\Http\Controllers\profile\ProfileController::class, 'update'])->name('profile.update');
+Route::post('/profile', [\App\Http\Controllers\Profile\ProfileController::class, 'update'])->name('profile.update');
 
 //genres
-Route::get('/genres', [\App\Http\Controllers\movies\GenreController::class, 'index'])->name('genres.index');
+Route::get('/genres', [\App\Http\Controllers\Movies\GenreController::class, 'index'])->name('genres.index');
 
-Route::post('/add-genres', [\App\Http\Controllers\movies\GenreController::class, 'addGenres'])->name('genres.add-genres');
+Route::post('/add-genres', [\App\Http\Controllers\Movies\GenreController::class, 'addGenres'])->name('genres.add-genres');
 
 // session
-Route::get('/check-session', [\App\Http\Controllers\auth\SessionController::class, 'checkSession'])->name('session.check-session');
+Route::get('/check-session', [\App\Http\Controllers\Auth\SessionController::class, 'checkSession'])->name('session.check-session');
 
 // notifications
 Route::group(['middleware' => ['auth:sanctum']], function () {
-	Route::get('/notifications', [\App\Http\Controllers\notifications\NotificationController::class, 'index'])->name('notification.index');
+	Route::get('/notifications', [\App\Http\Controllers\Notifications\NotificationController::class, 'index'])->name('notification.index');
 	Route::get('/user/{userId}/notifications', [NotificationController::class, 'getFilteredNotifications'])->name('notification.get-filtered-notifications');
-	Route::post('/notifications/{user}/{type}', [\App\Http\Controllers\notifications\NotificationController::class, 'notify']);
-	Route::put('/notifications/{notification}/mark-as-read', [\App\Http\Controllers\notifications\NotificationController::class, 'markAsRead'])->name('notification.mark-as-read');
-	Route::put('/notifications/mark-all-read', [\App\Http\Controllers\notifications\NotificationController::class, 'markAllAsRead'])->name('notification.mark-all-as-read');
+	Route::post('/notifications/{user}/{type}', [\App\Http\Controllers\Notifications\NotificationController::class, 'notify']);
+	Route::put('/notifications/{notification}/mark-as-read', [\App\Http\Controllers\Notifications\NotificationController::class, 'markAsRead'])->name('notification.mark-as-read');
+	Route::put('/notifications/mark-all-read', [\App\Http\Controllers\Notifications\NotificationController::class, 'markAllAsRead'])->name('notification.mark-all-as-read');
 });
