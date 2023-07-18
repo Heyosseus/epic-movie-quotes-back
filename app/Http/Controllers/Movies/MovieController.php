@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Movies;
 
-use App\Http\Requests\AddMovieRequest;
-use App\Http\Requests\UpdateMovieRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Movies\AddMovieRequest;
+use App\Http\Requests\Movies\UpdateMovieRequest;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +19,7 @@ class MovieController extends Controller
 
 		$query = $user->movies()
 			->with('quotes', 'genres', 'user')
-			->orderBy('created_at', 'desc');
+			->latest();
 
 		if (request('search')) {
 			$searchQuery = request('search');
@@ -40,7 +41,7 @@ class MovieController extends Controller
 		});
 	}
 
-	public function searchMoviesIfEmpty($request, $movies)
+	public function searchMoviesIfEmpty($request, $movies): \Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
 		if ($request->has('search') && $movies->isEmpty()) {
 			$searchQuery = $request->input('search');
@@ -61,36 +62,37 @@ class MovieController extends Controller
 		return new MovieResource($movie);
 	}
 
-	public function store(AddMovieRequest $request): MovieResource
-	{
-		$this->authorize('store', Movie::class);
-		$attributes = $request->validated();
+		public function store(AddMovieRequest $request): MovieResource
+		{
+			$attributes = $request->all();
 
-		$movie = Movie::create($attributes);
-		$genres = json_decode($request->input('genre'));
+			$this->authorize('store', Movie::class);
 
-		$movie->genres()->attach($genres);
+			$movie = Movie::create($attributes);
+			$genres = json_decode($request->input('genre'));
 
-		if ($request->hasFile('poster')) {
-			$poster = $request->file('poster');
-			$filename = time() . '.' . $poster->getClientOriginalExtension();
-			$path = $poster->storeAs('public/images', $filename);
+			$movie->genres()->attach($genres);
 
-			$relativePath = str_replace('public/', '', $path);
+			if ($request->hasFile('poster')) {
+				$poster = $request->file('poster');
+				$filename = time() . '.' . $poster->getClientOriginalExtension();
+				$path = $poster->storeAs('public/images', $filename);
 
-			$movie->poster = $relativePath;
-			$movie->save();
+				$relativePath = str_replace('public/', '', $path);
+
+				$movie->poster = $relativePath;
+				$movie->save();
+			}
+			return new MovieResource($movie);
 		}
-		return new MovieResource($movie);
-	}
 
 	public function update(UpdateMovieRequest $request, Movie $movie): MovieResource
 	{
 		$this->authorize('update', $movie);
-		$movie->title = $request->input('title');
-		$movie->director = $request->input('director');
-		$movie->description = $request->input('description');
-		$movie->release_date = $request->input('release_date');
+		$movie->title = $request->title;
+		$movie->director = $request->director;
+		$movie->description = $request->description;
+		$movie->release_date = $request->release_date;
 
 		if ($request->hasFile('poster')) {
 			$poster = $request->file('poster');

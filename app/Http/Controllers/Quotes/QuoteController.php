@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Quotes;
 
-use App\Http\Requests\AddQuoteRequest;
-use App\Http\Requests\UpdateQuoteRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Quotes\AddQuoteRequest;
+use App\Http\Requests\Quotes\UpdateQuoteRequest;
 use App\Http\Resources\QuoteResource;
 use App\Models\Movie;
 use App\Models\Quote;
@@ -15,14 +16,15 @@ class QuoteController extends Controller
 	public function index(Request $request, Movie $movie): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	{
 		$this->authorize('index', Quote::class);
-		if ($request->has('query')) {
-			$query = $request->query('query');
+		$query = $request->query('query');
+
+		if ($query) {
 			$quotes = Quote::with('movie', 'user', 'comments', 'likes')->where('body->en', 'LIKE', '%' . $query . '%')
 				->orWhere('body->ka', 'LIKE', '%' . $query . '%')
 				->get();
 		} else {
 			$quotes = Quote::with('movie', 'user', 'comments', 'comments.user', 'likes')
-				->orderBy('created_at', 'desc')
+				->latest()
 				->paginate(3);
 		}
 		$quotes->load('movie', 'user', 'comments', 'comments.user');

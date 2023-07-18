@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Notifications;
 
 use App\Events\NotificationReceived;
+use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +16,7 @@ class NotificationController extends Controller
 		$quoteId = $request->input('quote_id');
 		$from = auth('sanctum')->user()->name;
 
-		if ($user->id !== auth('sanctum')->user()->id) {
+		if ($user->id !== auth('sanctum')->id()) {
 			$notification = (object) [
 				'to'         => $user->id,
 				'from'       => $from,
@@ -41,7 +42,7 @@ class NotificationController extends Controller
 		Notification::create([
 			'to'       => $notification->to,
 			'from'     => $notification->from,
-			'user_id'  => auth('sanctum')->user()->id,
+			'user_id'  => auth('sanctum')->id(),
 			'quote_id' => $notification->quote_id,
 			'type'     => $notification->type,
 		]);
@@ -53,7 +54,7 @@ class NotificationController extends Controller
 		$notifications = Notification::with('quotes', 'user', 'user.quotes', 'quotes.comments.user', 'quotes.movie')
 			->where('to', $user->id)
 			->where('from', '!=', $user->name)
-			->orderBy('created_at', 'desc')
+			->latest()
 			->get();
 
 		return response()->json($notifications);

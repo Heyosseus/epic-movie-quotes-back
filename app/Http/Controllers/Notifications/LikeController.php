@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Notifications;
 
 use App\Events\LikeNotification;
+use App\Http\Controllers\Controller;
+use App\Models\Quote;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use App\Models\Quote;
 
 class LikeController extends Controller
 {

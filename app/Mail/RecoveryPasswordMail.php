@@ -23,7 +23,6 @@ class RecoveryPasswordMail extends Mailable
 	 */
 	public function build(): Mailable
 	{
-		//		$token = route('email_verification_reset_password', ['token' => $this->token]);
 		return $this->view('emails.recovery', ['token' => $this->token])
 			->subject('Reset your password')
 			->with(['token' => $this->token]);

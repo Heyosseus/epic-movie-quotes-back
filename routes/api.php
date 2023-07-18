@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Notifications\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,72 +20,74 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-	Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
+	Route::post('/logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout');
 });
 
-Route::controller(\App\Http\Controllers\AuthController::class)->group(function () {
-	Route::post('/login', 'login');
-	Route::post('/register', 'register');
-	Route::get('/cookie-credentials', [App\Http\Controllers\AuthController::class, 'getDecryptedCredentials']);
+Route::controller(\App\Http\Controllers\Auth\AuthController::class)->group(function () {
+	Route::post('/login', 'login')->name('login');
+	Route::post('/register', 'register')->name('register');
+	Route::get('/cookie-credentials', [\App\Http\Controllers\Auth\AuthController::class, 'getDecryptedCredentials'])->name('cookie-credentials');
 });
 
-Route::controller(\App\Http\Controllers\RecoveryPasswordController::class)->group(function () {
-	Route::post('/forgot-password', 'store');
-	Route::put('/reset-password', 'update');
+Route::controller(\App\Http\Controllers\Profile\RecoveryPasswordController::class)->group(function () {
+	Route::post('/forgot-password', 'store')->name('forgot-password.store');
+	Route::put('/reset-password', 'update')->name('reset-password.update');
 });
 
 // google auth
-Route::controller(\App\Http\Controllers\GoogleAuthController::class)->group(function () {
-	Route::get('/auth/google/redirect', 'redirect')->name('google-auth');
-	Route::get('/auth/google/callback', 'callback')->name('google-auth-callback');
+Route::controller(\App\Http\Controllers\Auth\GoogleAuthController::class)->group(function () {
+	Route::get('/auth/google/redirect', 'redirect')->name('google-auth')->name('google.redirect');
+	Route::get('/auth/google/callback', 'callback')->name('google-auth-callback')->name('google.callback');
 });
 
 // movie routes
-Route::controller(\App\Http\Controllers\MovieController::class)->group(function () {
-	Route::get('/movies', 'index');
-	Route::get('/all-movies', 'allMovies');
-	Route::get('/search-movies/{query}', 'searchMovies');
-	Route::post('/add-movies', 'store');
-	Route::post('/update-movies/{movie}', 'update');
-	Route::get('/movies/{movie}', 'show');
-	Route::delete('/movies/{movie}', 'destroy');
+Route::controller(\App\Http\Controllers\Movies\MovieController::class)->group(function () {
+	Route::get('/movies', 'index')->name('movies.index');
+	Route::get('/all-movies', 'allMovies')->name('movies.all-movies');
+	Route::get('/search-movies/{query}', 'searchMovies')->name('movies.search-movies');
+	Route::post('/add-movies', 'store')->name('movies.store');
+	Route::post('/update-movies/{movie}', 'update')->name('movies.update');
+	Route::get('/movies/{movie}', 'show')->name('movies.show');
+	Route::delete('/movies/{movie}', 'destroy')->name('movies.destroy');
 });
 
 // quote routes
-Route::controller(\App\Http\Controllers\QuoteController::class)->group(function () {
-	Route::get('/quotes ', 'index');
-	Route::get('/search-quotes/{query}', 'searchQuotes');
-	Route::post('/add-quotes', 'store');
-	Route::post('/update-quotes/{quote}', 'update');
-	Route::get('/show-quotes/{quote}', 'show');
-	Route::delete('/quotes/{quote}', 'destroy');
+Route::controller(\App\Http\Controllers\Quotes\QuoteController::class)->group(function () {
+	Route::get('/quotes ', 'index')->name('quotes.index');
+	Route::get('/search-quotes/{query}', 'searchQuotes')->name('quotes.search-quotes');
+	Route::post('/add-quotes', 'store')->name('quotes.store');
+	Route::post('/update-quotes/{quote}', 'update')->name('quotes.update');
+	Route::get('/show-quotes/{quote}', 'show')->name('quotes.show');
+	Route::delete('/quotes/{quote}', 'destroy')->name('quotes.destroy');
 });
 //comments
-Route::controller(\App\Http\Controllers\CommentController::class)->group(function () {
-	Route::get('/comments/{quoteId}', 'index');
-	Route::post('/add-comments', 'store');
+Route::controller(\App\Http\Controllers\Notifications\CommentController::class)->group(function () {
+	Route::get('/comments/{quoteId}', 'index')->name('comments.index');
+	Route::post('/add-comments', 'store')->name('comments.store');
 });
 //likes
-Route::controller(\App\Http\Controllers\LikeController::class)->group(function () {
-	Route::get('/likes/{quoteId}', 'index');
-	Route::post('/quotes/{quote}/like/{user}', 'store')->middleware('auth:sanctum');
-	Route::delete('/remove-likes', 'destroy');
+Route::controller(\App\Http\Controllers\Notifications\LikeController::class)->group(function () {
+	Route::get('/likes/{quoteId}', 'index')->name('likes.index');
+	Route::post('/quotes/{quote}/like/{user}', 'store')->name('likes.store')->middleware('auth:sanctum');
+	Route::delete('/remove-likes', 'destroy')->name('likes.destroy');
 });
 
 //profile
-Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update']);
+Route::post('/profile', [\App\Http\Controllers\Profile\ProfileController::class, 'update'])->name('profile.update');
 
 //genres
-Route::get('/genres', [App\Http\Controllers\GenreController::class, 'index']);
+Route::get('/genres', [\App\Http\Controllers\Movies\GenreController::class, 'index'])->name('genres.index');
 
-Route::post('/add-genres', [App\Http\Controllers\GenreController::class, 'addGenres']);
+Route::post('/add-genres', [\App\Http\Controllers\Movies\GenreController::class, 'addGenres'])->name('genres.add-genres');
 
 // session
-Route::get('/check-session', [App\Http\Controllers\SessionController::class, 'checkSession']);
+Route::get('/check-session', [\App\Http\Controllers\Auth\SessionController::class, 'checkSession'])->name('session.check-session');
 
 // notifications
-Route::post('/notifications/{user}/{type}', [App\Http\Controllers\NotificationController::class, 'notify'])->middleware('auth:sanctum');
-Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->middleware('auth:sanctum');
-Route::get('/user/{userId}/notifications', [NotificationController::class, 'getFilteredNotifications']);
-Route::put('/notifications/{notification}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->middleware('auth:sanctum');
-Route::put('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->middleware('auth:sanctum');
+Route::group(['middleware' => ['auth:sanctum']], function () {
+	Route::get('/notifications', [\App\Http\Controllers\Notifications\NotificationController::class, 'index'])->name('notification.index');
+	Route::get('/user/{userId}/notifications', [NotificationController::class, 'getFilteredNotifications'])->name('notification.get-filtered-notifications');
+	Route::post('/notifications/{user}/{type}', [\App\Http\Controllers\Notifications\NotificationController::class, 'notify']);
+	Route::put('/notifications/{notification}/mark-as-read', [\App\Http\Controllers\Notifications\NotificationController::class, 'markAsRead'])->name('notification.mark-as-read');
+	Route::put('/notifications/mark-all-read', [\App\Http\Controllers\Notifications\NotificationController::class, 'markAllAsRead'])->name('notification.mark-all-as-read');
+});

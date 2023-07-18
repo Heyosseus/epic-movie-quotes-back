@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Profile;
 
-use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Mail\NewEmailMail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
@@ -11,12 +12,11 @@ class ProfileController extends Controller
 {
 	public function update(UpdateProfileRequest $request): JsonResponse
 	{
-		$attributes = $request->validated();
-
 		$user = auth()->user();
 
 		$oldEmail = $user->email;
-		$user->update($attributes);
+		$user->name = $request->name;
+		$user->email = $request->email;
 
 		if ($user->email !== $oldEmail) {
 			Mail::to($user->email)->send(new NewEmailMail($user));
@@ -33,6 +33,7 @@ class ProfileController extends Controller
 			$user->profile_picture = $relativePath;
 			$user->save();
 		}
+		$user->save();
 
 		return response()->json(['user' => $user], 200);
 	}

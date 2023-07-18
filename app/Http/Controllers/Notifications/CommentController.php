@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Notifications;
 
 use App\Events\CommentNotification;
-use App\Http\Requests\AddCommentRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Notifications\AddCommentRequest;
 use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
 
@@ -13,7 +14,7 @@ class CommentController extends Controller
 	{
 		$comments = Comment::with('quote', 'quote.movie', 'user')
 			->where('quote_id', $quoteId)
-			->orderBy('created_at', 'asc')
+			->latest()
 			->get();
 
 		return response()->json(['comments' => $comments], 200);

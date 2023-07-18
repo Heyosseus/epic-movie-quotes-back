@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Movies;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -27,6 +27,7 @@ class UpdateMovieRequest extends FormRequest
 			'release_date'    => 'integer',
 			'description_en'  => 'string',
 			'description_ka'  => 'string',
+			'poster'          => '',
 		];
 	}
 

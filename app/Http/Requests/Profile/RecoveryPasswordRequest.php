@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Profile;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddQuoteRequest extends FormRequest
+class RecoveryPasswordRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,18 +22,7 @@ class AddQuoteRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'body_en'   => 'required',
-			'body_ka'   => 'required',
-			'thumbnail' => 'required',
-			'movie_id'  => 'required',
-			'user_id'   => 'required',
+			'password'              => 'required|min:8|max:15',
 		];
-	}
-
-	protected function prepareForValidation(): void
-	{
-		$this->merge([
-			'body'       => json_encode(['en' => $this->body_en, 'ka' => $this->body_ka]),
-		]);
 	}
 }

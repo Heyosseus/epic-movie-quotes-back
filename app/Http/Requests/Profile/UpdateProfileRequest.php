@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Profile;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddCommentRequest extends FormRequest
+class UpdateProfileRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,9 +22,9 @@ class AddCommentRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'quote_id' => 'required',
-			'user_id'  => 'required',
-			'content'  => 'required|string|max:255',
+			'name'            => 'string',
+			'email'           => 'email',
+			'profile_picture' => 'image',
 		];
 	}
 }
