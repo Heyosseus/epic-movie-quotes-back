@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\auth;
 
-use App\Http\Requests\AuthLoginRequest;
-use App\Http\Requests\AuthRegisterRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\auth\AuthLoginRequest;
+use App\Http\Requests\auth\AuthRegisterRequest;
 use App\Mail\AccountActivationMail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -31,7 +32,7 @@ class AuthController extends Controller
 		public function login(AuthLoginRequest $request): JsonResponse
 		{
 			try {
-				if (Auth::attempt($request->only('email', 'password'), $request->remember_me)) {
+				if (Auth::attempt($request->only('email', 'name', 'password'), $request->remember_me)) {
 					$user = Auth::user();
 					if ($request->remember_me) {
 						Cookie::queue(Cookie::make('email', $request->email, 60 * 24 * 2)->withHttpOnly(false));

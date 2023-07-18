@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\quotes;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateQuoteRequest extends FormRequest
+class AddQuoteRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -14,6 +14,11 @@ class UpdateQuoteRequest extends FormRequest
 		return true;
 	}
 
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+	 */
 	public function rules(): array
 	{
 		return [
@@ -21,6 +26,7 @@ class UpdateQuoteRequest extends FormRequest
 			'body_ka'   => 'required',
 			'thumbnail' => 'required',
 			'movie_id'  => 'required',
+			'user_id'   => 'required',
 		];
 	}
 

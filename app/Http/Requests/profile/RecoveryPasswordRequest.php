@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\profile;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddLikesRequest extends FormRequest
+class RecoveryPasswordRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class AddLikesRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'quote_id' => 'required',
-			'user_id'  => 'required',
+			'password'              => 'required|min:8|max:15',
 		];
 	}
 }

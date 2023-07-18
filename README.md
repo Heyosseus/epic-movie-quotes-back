@@ -22,8 +22,7 @@ As a registered user, you can explore a vast collection of movie quotes contribu
 5. Run `php artisan migrate` to create the database tables
 6. Run `php artisan db:seed` to seed the database
 7. Run `php artisan key:generate` to generate the application key
-8. Run `php artisan queue:work` to activate queue worker
-9. Run `php artisan serve` to start the server
+8. Run `php artisan serve` to start the server
 
 **# DrawSQL Diagram**
 

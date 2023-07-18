@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\profile;
 
-use App\Http\Requests\RecoveryPasswordRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\profile\RecoveryPasswordRequest;
 use App\Mail\RecoveryPasswordMail;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -12,7 +14,7 @@ use Illuminate\Support\Str;
 
 class RecoveryPasswordController extends Controller
 {
-	public function store(Request $request)
+	public function store(Request $request): JsonResponse
 	{
 		$user = User::where('email', $request->email)->first();
 		if ($user) {
@@ -25,19 +27,17 @@ class RecoveryPasswordController extends Controller
 		return response()->json(['message' => 'email is sent!', 'user' => $user]);
 	}
 
-	public function update(RecoveryPasswordRequest $request)
+	public function update(RecoveryPasswordRequest $request, User $user): JsonResponse
 	{
 		$user = User::where('email', $request->email)->first();
-		if ($user) {
-			$user->password = $request->password;
-			$user->save();
+		$user->password = $request->password;
+		$user->update();
 
-			$attrs = $request->validated();
-			if (Auth::attempt($attrs)) {
-				$user = Auth::user();
-				auth()->login($user);
-				return response()->json(['message' => 'Password is changed!', 'user' => $user]);
-			}
+		$attributes = $request->validated();
+		if (Auth::attempt($attributes)) {
+			$user = Auth::user();
+			auth()->login($user);
+			return response()->json(['message' => 'Password is changed!', 'user' => $user]);
 		}
 
 		return response()->json(['message' => 'password is changed!', 'user' => $user]);

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\notifications;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RecoveryPasswordRequest extends FormRequest
+class AddCommentRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,7 +22,9 @@ class RecoveryPasswordRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'password'              => 'required|min:8|max:15',
+			'quote_id' => 'required',
+			'user_id'  => 'required',
+			'content'  => 'required|string|max:255',
 		];
 	}
 }

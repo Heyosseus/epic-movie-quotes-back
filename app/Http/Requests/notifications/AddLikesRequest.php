@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\notifications;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProfileRequest extends FormRequest
+class AddLikesRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,9 +22,8 @@ class UpdateProfileRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name'            => 'nullable|string',
-			'email'           => 'email',
-			'profile_picture' => 'image',
+			'quote_id' => 'required',
+			'user_id'  => 'required',
 		];
 	}
 }

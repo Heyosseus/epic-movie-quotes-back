@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\movies;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateMovieRequest extends FormRequest
+class AddMovieRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -16,17 +16,22 @@ class UpdateMovieRequest extends FormRequest
 
 	/**
 	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
 	 */
 	public function rules(): array
 	{
 		return [
-			'title_en'        => 'string',
-			'title_ka'        => 'string',
-			'director_en'     => 'string',
-			'director_ka'     => 'string',
-			'release_date'    => 'integer',
-			'description_en'  => 'string',
-			'description_ka'  => 'string',
+			'title_en'        => 'required|string',
+			'title_ka'        => 'required|string',
+			'genre'           => 'required',
+			'director_en'     => 'required|string',
+			'director_ka'     => 'required|string',
+			'release_date'    => 'required|integer',
+			'description_en'  => 'required|string',
+			'description_ka'  => 'required|string',
+			'poster'          => 'required|image',
+			'user_id'         => 'required',
 		];
 	}
 

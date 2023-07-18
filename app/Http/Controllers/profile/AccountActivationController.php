@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\profile;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 
 class AccountActivationController extends Controller
 {
-	public function create($token)
+	public function create($token): \Illuminate\Http\JsonResponse
 	{
 		$user = User::where(['token' => $token])->first();
 		if ($user) {
