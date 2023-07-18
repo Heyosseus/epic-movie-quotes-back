@@ -42,7 +42,7 @@ class NotificationController extends Controller
 		Notification::create([
 			'to'       => $notification->to,
 			'from'     => $notification->from,
-			'user_id'  => auth('sanctum')->id,
+			'user_id'  => auth('sanctum')->id(),
 			'quote_id' => $notification->quote_id,
 			'type'     => $notification->type,
 		]);
