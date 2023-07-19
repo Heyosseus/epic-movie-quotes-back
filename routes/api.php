@@ -69,7 +69,6 @@ Route::controller(\App\Http\Controllers\Notifications\CommentController::class)-
 Route::controller(\App\Http\Controllers\Notifications\LikeController::class)->group(function () {
 	Route::get('/likes/{quoteId}', 'index')->name('likes.index');
 	Route::post('/quotes/{quote}/like/{user}', 'store')->name('likes.store')->middleware('auth:sanctum');
-	Route::delete('/remove-likes', 'destroy')->name('likes.destroy');
 });
 
 //profile

@@ -14,12 +14,18 @@ class LikeNotification implements ShouldBroadcast
 
 	public $like;
 
+	public $quoteId;
+
+	public $action;
+
 	/**
 	 * Create a new event instance.
 	 */
-	public function __construct($like)
+	public function __construct($like, $quoteId, $action)
 	{
 		$this->like = $like;
+		$this->quoteId = $quoteId;
+		$this->action = $action;
 	}
 
 	/**
