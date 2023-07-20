@@ -10,8 +10,9 @@ use Illuminate\Http\JsonResponse;
 
 class LikeController extends Controller
 {
-	public function store(Quote $quote, User $user): JsonResponse
+	public function store(Quote $quote): JsonResponse
 	{
+		$user = User::find(auth()->id());
 		$existingLike = $quote->likes()->where('user_id', $user->id)->first();
 
 		if ($existingLike) {
@@ -26,8 +27,7 @@ class LikeController extends Controller
 		} else {
 			$quote->likes()->attach($user, ['likes' => true]);
 			$like = $quote->likes()->where('user_id', $user->id)->first();
-
-			event(new LikeNotification($like));
+			event(new LikeNotification($like, $quote->id, 'like'));
 
 			return response()->json([
 				'message' => 'Liked successfully',

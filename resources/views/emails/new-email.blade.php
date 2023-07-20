@@ -14,7 +14,7 @@
     <h1 style="color: #fff; font-size:16px;
      margin-top: 14px; text-align: left">You just successfully update your email. Please, click the button below to verify your new email:</h1>
     <button style="padding: 8px 12px; background-color: #E31221; border-radius: 4px;
-     color: #fff; border: none; outline: none; margin-right: auto; margin-top: 22px;"><a href="{{env('FRONTEND_URL') . '/success-email'}}" style="text-decoration: none; color: white"> Verify email</a></button>
+     color: #fff; border: none; outline: none; margin-right: auto; margin-top: 22px;"><a href="{{env('FRONTEND_URL') . '/news-feed'}}" style="text-decoration: none; color: white"> Verify email</a></button>
     <h1 style="color: #fff; font-size:16px;  margin-bottom: 20px;
      margin-top: 14px; text-align: left">If clicking doesn't work, you can try copying and pasting it to your browser:</h1>
     <p style="color: #DDCCAA; text-align: left">https://movie-quotes.com/verify/</p>
